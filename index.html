@@ -93,17 +93,25 @@
             <div id="content"></div>
         </div>
 
-        <div id="registro" class="hidden">
-            <h2>REGISTRO USUARIO</h2>
-            <select id="tipo">
-                <option value="user">Usuario</option>
-                <option value="admin">Administrador</option>
-            </select><br>
-            <input id="newUser" placeholder="Nuevo Usuario"><br>
-            <input id="newPass" type="password" placeholder="Nueva Contraseña"><br>
-            <button onclick="guardar()">GUARDAR</button>
-            <button onclick="volverMain()">VOLVER</button>
-        </div>
+        <div id="registro" class="hidden" style="padding:40px;max-width:500px;margin:auto;background:#1a1a1a;border-radius:15px;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+    <h2 style="color:#00ff88;margin-bottom:20px;text-align:center;">Crear Cuenta</h2>
+    <input type="text" id="newUsername" placeholder="Usuario" style="width:100%;padding:10px;margin:10px 0;border:1px solid #aa00ff;background:#0a0a0a;color:#e0e0ff;border-radius:5px;">
+    <input type="password" id="newPassword" placeholder="Contraseña" style="width:100%;padding:10px;margin:10px 0;border:1px solid #aa00ff;background:#0a0a0a;color:#e0e0ff;border-radius:5px;">
+    <button onclick="createAccount()" style="width:100%;padding:12px;background:#00ff88;color:#000;border:none;border-radius:5px;font-weight:bold;cursor:pointer;margin-top:20px;">Crear Cuenta</button>
+    <button onclick="toggleRegistro()" style="width:100%;padding:12px;background:#aa00ff;color:#e0e0ff;border:none;border-radius:5px;font-weight:bold;cursor:pointer;margin-top:10px;">Volver</button>
+</div>
+
+<!-- CONTENEDOR ETIQUETAS -->
+<div id="etiquetasContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:#0a0a0a;">
+  <button onclick="volverDesdeIframe()" style="position:fixed;top:10px;right:10px;z-index:1000;padding:10px 20px;background:#aa00ff;color:#e0e0ff;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">← VOLVER</button>
+  <iframe id="etiquetas" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/generador-de-etiquetas-v2/"></iframe>
+</div>
+
+<!-- CONTENEDOR UBICACIONES -->
+<div id="ubicacionesContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:#0a0a0a;">
+  <button onclick="volverDesdeIframe()" style="position:fixed;top:10px;right:10px;z-index:1000;padding:10px 20px;background:#aa00ff;color:#e0e0ff;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">← VOLVER</button>
+  <iframe id="ubicaciones" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/UBIKM230/"></iframe>
+</div>
 
        <div id="etiquetasContainer" class="hidden">
   <button onclick="volverDesdeIframe()" style="position:fixed;top:10px;right:10px;z-index:1000;padding:10px 20px;background:#aa00ff;color:#e0e0ff;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">← VOLVER</button>
@@ -199,15 +207,13 @@
         }
 
       function goEtiquetas() {
-  document.getElementById('content').innerHTML = '';
   document.getElementById('etiquetasContainer').classList.remove('hidden');
   document.getElementById('ubicacionesContainer').classList.add('hidden');
   document.getElementById('registro').classList.add('hidden');
   document.getElementById('main').classList.add('hidden');
 }
-        
-       function goUbicaciones() {
-  document.getElementById('content').innerHTML = '';
+
+function goUbicaciones() {
   document.getElementById('ubicacionesContainer').classList.remove('hidden');
   document.getElementById('etiquetasContainer').classList.add('hidden');
   document.getElementById('registro').classList.add('hidden');
@@ -218,7 +224,6 @@ function volverDesdeIframe() {
   document.getElementById('etiquetasContainer').classList.add('hidden');
   document.getElementById('ubicacionesContainer').classList.add('hidden');
   document.getElementById('main').classList.remove('hidden');
-}
 }
 
         function goRegistro() {
