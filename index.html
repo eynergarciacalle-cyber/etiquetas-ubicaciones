@@ -253,6 +253,34 @@
             background-clip: unset;
         }
 
+        .tipo-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .tipo-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tipo-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            box-shadow: var(--glow-blue);
+        }
+
+        .tipo-btn:hover {
+            border-color: var(--accent-blue);
+        }
+
         .btn-volver {
             position: fixed;
             top: 20px;
@@ -325,6 +353,13 @@
     <!-- CONTENEDOR REGISTRO -->
     <div id="registro" class="hidden">
         <h2>Crear Cuenta</h2>
+        
+        <label style="color: var(--text-primary); font-weight: 500; display: block; margin-bottom: 10px;">Tipo de Usuario:</label>
+        <div class="tipo-selector">
+            <button class="tipo-btn active" onclick="selectTipo('usuario')">Usuario</button>
+            <button class="tipo-btn" onclick="selectTipo('admin')">Administrador</button>
+        </div>
+
         <input type="text" id="newUsername" placeholder="Usuario">
         <input type="password" id="newPassword" placeholder="Contraseña">
         <button onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
@@ -339,6 +374,7 @@
         let currentUser;
         let isAdmin = false;
         let usersData = { admins: [], users: [] };
+        let selectedTipo = 'usuario';
 
         // INICIALIZAR TEMA
         function initTheme() {
@@ -361,6 +397,15 @@
             const theme = document.documentElement.getAttribute('data-theme');
             const btn = document.querySelector('.theme-toggle');
             btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // SELECCIONAR TIPO DE USUARIO
+        function selectTipo(tipo) {
+            selectedTipo = tipo;
+            document.querySelectorAll('.tipo-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
         }
 
         // CARGAR DATOS PRIVADOS DE GOOGLE APPS SCRIPT
@@ -413,8 +458,12 @@
             document.getElementById('login').classList.add('hidden');
             document.getElementById('main').classList.remove('hidden');
             document.getElementById('currentUser').textContent = currentUser;
+            
+            // SOLO ADMINS VEN EL BOTÓN DE REGISTRAR USUARIO
             if (isAdmin) {
                 document.getElementById('adminBtn').style.display = 'block';
+            } else {
+                document.getElementById('adminBtn').style.display = 'none';
             }
         }
 
@@ -450,6 +499,18 @@
             document.getElementById('main').classList.add('hidden');
             document.getElementById('etiquetasContainer').classList.add('hidden');
             document.getElementById('ubicacionesContainer').classList.add('hidden');
+            selectedTipo = 'usuario'; // Reset al valor default
+            resetTipoButtons();
+        }
+
+        function resetTipoButtons() {
+            document.querySelectorAll('.tipo-btn').forEach((btn, index) => {
+                if (index === 0) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
         }
 
         function volverDesdeIframe() {
@@ -463,15 +524,20 @@
             document.getElementById('main').classList.remove('hidden');
         }
 
-        // CREAR CUENTA
+        // CREAR CUENTA - SOLO PARA ADMINS
         async function createAccount() {
+            if (!isAdmin) {
+                alert('No tienes permisos para crear usuarios');
+                return;
+            }
+
             const usuario = document.getElementById('newUsername').value.trim();
             const pass = document.getElementById('newPassword').value;
             
             if (!usuario || !pass) return alert('Completa campos');
 
             const formData = new FormData();
-            formData.append('tipo', 'usuario');
+            formData.append('tipo', selectedTipo);
             formData.append('usuario', usuario);
             formData.append('pass', pass);
 
@@ -479,7 +545,8 @@
                 const res = await fetch(GUARDAR_URL, { method: 'POST', body: formData });
                 const text = await res.text();
                 if (text.includes('OK')) {
-                    alert('Usuario registrado exitosamente');
+                    const tipoTexto = selectedTipo === 'admin' ? 'Administrador' : 'Usuario';
+                    alert(tipoTexto + ' registrado exitosamente');
                     document.getElementById('newUsername').value = '';
                     document.getElementById('newPassword').value = '';
                     await cargarDatos();
