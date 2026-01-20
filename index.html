@@ -121,15 +121,20 @@
 
         // CARGAR DATOS PRIVADOS DE GOOGLE APPS SCRIPT
         async function cargarDatos() {
-            try {
-                const res = await fetch(LEER_URL);
-                usersData = await res.json();
-                console.log('Datos cargados:', usersData);
-            } catch(e) { 
-                console.error('Error carga datos:', e); 
-                alert('Error conectando a Google Sheets. Verifica URLs.');
-            }
-        }
+  try {
+    const res = await fetch(LEER_URL);
+    const data = await res.json();
+    if (data && data.admins && data.users) {
+      usersData = data;
+    } else {
+      usersData = {admins: [], users: []};
+    }
+    console.log('Datos:', usersData);
+  } catch(e) { 
+    console.error('Error:', e);
+    usersData = {admins: [], users: []};
+  }
+}
 
         // LOGIN PRIVADO
         async function login() {
