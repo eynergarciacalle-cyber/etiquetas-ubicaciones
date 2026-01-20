@@ -93,6 +93,11 @@
             100% { transform: rotate(360deg); }
         }
 
+        @keyframes slideIn {
+            0% { transform: translateY(-20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -364,7 +369,7 @@
             transform: scale(1.1);
         }
 
-        /* LOADING SPINNER */
+        /* LOADING OVERLAY */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -404,6 +409,41 @@
             font-family: 'SF Pro Display', sans-serif;
         }
 
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4000;
+            padding: 16px 30px;
+            border-radius: 12px;
+            font-family: 'SF Pro Text', sans-serif;
+            font-weight: 500;
+            font-size: 1.1em;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-elevated);
+            animation: slideIn 0.3s ease;
+            display: none;
+        }
+
+        .toast.active {
+            display: block;
+        }
+
+        .toast.success {
+            background: rgba(52, 199, 89, 0.2);
+            color: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .toast.error {
+            background: rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+            border-color: #ff3b30;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
@@ -425,9 +465,13 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="spinner"></div>
-            <div class="loading-text">Cargando...</div>
+            <div class="loading-text" id="loadingText">Cargando...</div>
         </div>
     </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div class="toast" id="toastSuccess">✓ Usuario creado exitosamente</div>
+    <div class="toast" id="toastError"></div>
 
     <div class="main-wrapper">
         <div class="container">
@@ -466,7 +510,7 @@
 
                 <input type="text" id="newUsername" placeholder="Usuario">
                 <input type="password" id="newPassword" placeholder="Contraseña">
-                <button onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
+                <button id="createBtn" onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
             </div>
         </div>
     </div>
@@ -496,14 +540,34 @@
         let currentScreen = 'login';
 
         // MOSTRAR/OCULTAR LOADING
-        function showLoading(show = true) {
+        function showLoading(show = true, message = 'Cargando...') {
             const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            loadingText.textContent = message;
             if (show) {
                 loadingOverlay.classList.add('active');
                 document.getElementById('loginBtn').disabled = true;
+                document.getElementById('createBtn').disabled = true;
             } else {
                 loadingOverlay.classList.remove('active');
                 document.getElementById('loginBtn').disabled = false;
+                document.getElementById('createBtn').disabled = false;
+            }
+        }
+
+        // MOSTRAR TOAST
+        function showToast(message, type = 'success', duration = 3000) {
+            const toastSuccess = document.getElementById('toastSuccess');
+            const toastError = document.getElementById('toastError');
+            
+            if (type === 'success') {
+                toastSuccess.textContent = '✓ ' + message;
+                toastSuccess.classList.add('active');
+                setTimeout(() => toastSuccess.classList.remove('active'), duration);
+            } else {
+                toastError.textContent = '✕ ' + message;
+                toastError.classList.add('error', 'active');
+                setTimeout(() => toastError.classList.remove('error', 'active'), duration);
             }
         }
 
@@ -598,7 +662,7 @@
 
         // LOGIN PRIVADO
         async function login() {
-            showLoading(true);
+            showLoading(true, 'Cargando...');
             
             await cargarDatos();
             const user = document.getElementById('user').value.trim();
@@ -709,6 +773,8 @@
             
             if (!usuario || !pass) return alert('Completa campos');
 
+            showLoading(true, 'Creando usuario...');
+
             const formData = new FormData();
             formData.append('tipo', selectedTipo);
             formData.append('usuario', usuario);
@@ -721,7 +787,9 @@
                 
                 if (text.includes('OK')) {
                     const tipoTexto = selectedTipo === 'admin' ? 'Administrador' : 'Usuario';
-                    alert(tipoTexto + ' registrado exitosamente');
+                    showLoading(false);
+                    showToast(tipoTexto + ' creado exitosamente', 'success', 3000);
+                    
                     document.getElementById('newUsername').value = '';
                     document.getElementById('newPassword').value = '';
                     
@@ -730,11 +798,13 @@
                         await cargarDatos();
                     }, 1000);
                 } else {
-                    alert('Error: ' + text);
+                    showLoading(false);
+                    showToast('Error: ' + text, 'error', 3000);
                 }
             } catch (e) {
                 console.error('Error guardando usuario:', e);
-                alert('Error guardando usuario');
+                showLoading(false);
+                showToast('Error guardando usuario', 'error', 3000);
             }
         }
     </script>
