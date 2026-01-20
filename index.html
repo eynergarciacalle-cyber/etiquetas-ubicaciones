@@ -88,6 +88,11 @@
             50% { transform: translateY(-20px); }
         }
 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -253,6 +258,12 @@
             box-shadow: var(--shadow-input);
         }
 
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         #adminBtn {
             background: rgba(175, 82, 222, 0.2);
             border-color: rgba(175, 82, 222, 0.4);
@@ -353,6 +364,46 @@
             transform: scale(1.1);
         }
 
+        /* LOADING SPINNER */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 122, 255, 0.2);
+            border-top: 4px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .loading-text {
+            color: var(--text-primary);
+            font-size: 1.2em;
+            font-weight: 500;
+            font-family: 'SF Pro Display', sans-serif;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
@@ -370,6 +421,14 @@
     <!-- BOTÓN VOLVER -->
     <button class="btn-volver" id="btnVolver" onclick="volverAtras()">←</button>
 
+    <!-- LOADING SPINNER -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Cargando...</div>
+        </div>
+    </div>
+
     <div class="main-wrapper">
         <div class="container">
             <!-- LOGIN -->
@@ -382,14 +441,14 @@
                     <button class="toggle-password" onclick="togglePassword()" type="button">👁️</button>
                 </div>
 
-                <button onclick="login()">INICIAR SESIÓN</button>
+                <button id="loginBtn" onclick="login()">INICIAR SESIÓN</button>
             </div>
 
             <!-- MAIN - OPCIONES -->
             <div id="main">
                 <h2>Bienvenido <span id="currentUser"></span></h2>
                 <button onclick="goEtiquetas()">ETIQUETAS</button>
-                <button onclick="goUbicaciones()">UBICACIONES</button>
+                <button onclick="goUbicaciones()">UBICACIONES KM 230</button>
                 <button id="adminBtn" onclick="goRegistro()" style="display:none;">REGISTRAR USUARIO</button>
                 <button onclick="logout()">SALIR</button>
                 <div id="content"></div>
@@ -435,6 +494,18 @@
         let selectedTipo = 'usuario';
         let passwordVisible = false;
         let currentScreen = 'login';
+
+        // MOSTRAR/OCULTAR LOADING
+        function showLoading(show = true) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (show) {
+                loadingOverlay.classList.add('active');
+                document.getElementById('loginBtn').disabled = true;
+            } else {
+                loadingOverlay.classList.remove('active');
+                document.getElementById('loginBtn').disabled = false;
+            }
+        }
 
         // TOGGLE VER/OCULTAR CONTRASEÑA
         function togglePassword() {
@@ -527,13 +598,19 @@
 
         // LOGIN PRIVADO
         async function login() {
+            showLoading(true);
+            
             await cargarDatos();
             const user = document.getElementById('user').value.trim();
             const pass = document.getElementById('pass').value;
             
             console.log('Login intento - Usuario:', user, 'Contraseña:', pass);
             
-            if (!user || !pass) return alert('Completa campos');
+            if (!user || !pass) {
+                showLoading(false);
+                alert('Completa campos');
+                return;
+            }
 
             // Busca en admins
             for (let row of usersData.admins) {
@@ -541,6 +618,7 @@
                 if (row[0] && row[0] === user && row[1] === pass) {
                     currentUser = user;
                     isAdmin = true;
+                    showLoading(false);
                     showMainScreen();
                     return;
                 }
@@ -552,11 +630,13 @@
                 if (row[0] && row[0] === user && row[1] === pass) {
                     currentUser = user;
                     isAdmin = false;
+                    showLoading(false);
                     showMainScreen();
                     return;
                 }
             }
             
+            showLoading(false);
             alert('Usuario o contraseña inválidos');
         }
 
