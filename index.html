@@ -416,9 +416,12 @@
                 const data = await res.json();
                 usersData.admins = data.admins.filter(row => row[0]);
                 usersData.users = data.users.filter(row => row[0]);
-                console.log('Datos:', usersData);
+                console.log('Datos cargados:', {
+                    admins: usersData.admins.length,
+                    users: usersData.users.length
+                });
             } catch (e) {
-                console.error('Error:', e);
+                console.error('Error cargando datos:', e);
                 usersData = { admins: [], users: [] };
             }
         }
@@ -426,15 +429,17 @@
         // LOGIN PRIVADO
         async function login() {
             await cargarDatos();
-            const user = document.getElementById('user').value.trim().toUpperCase();
+            const user = document.getElementById('user').value.trim();
             const pass = document.getElementById('pass').value;
-            console.log('Intentando login:', user, pass);
+            
+            console.log('Login intento - Usuario:', user, 'Contraseña:', pass);
             
             if (!user || !pass) return alert('Completa campos');
 
-            // Busca en admins
+            // Busca en admins - SIN convertir a mayúsculas
             for (let row of usersData.admins) {
-                if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
+                console.log('Comparando admin:', row[0], '==', user);
+                if (row[0] && row[0] === user && row[1] === pass) {
                     currentUser = user;
                     isAdmin = true;
                     showMain();
@@ -442,15 +447,17 @@
                 }
             }
             
-            // Busca en usuarios
+            // Busca en usuarios - SIN convertir a mayúsculas
             for (let row of usersData.users) {
-                if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
+                console.log('Comparando usuario:', row[0], '==', user);
+                if (row[0] && row[0] === user && row[1] === pass) {
                     currentUser = user;
                     isAdmin = false;
                     showMain();
                     return;
                 }
             }
+            
             alert('Usuario o contraseña inválidos');
         }
 
@@ -499,7 +506,7 @@
             document.getElementById('main').classList.add('hidden');
             document.getElementById('etiquetasContainer').classList.add('hidden');
             document.getElementById('ubicacionesContainer').classList.add('hidden');
-            selectedTipo = 'usuario'; // Reset al valor default
+            selectedTipo = 'usuario';
             resetTipoButtons();
         }
 
@@ -544,17 +551,23 @@
             try {
                 const res = await fetch(GUARDAR_URL, { method: 'POST', body: formData });
                 const text = await res.text();
+                console.log('Respuesta del servidor:', text);
+                
                 if (text.includes('OK')) {
                     const tipoTexto = selectedTipo === 'admin' ? 'Administrador' : 'Usuario';
                     alert(tipoTexto + ' registrado exitosamente');
                     document.getElementById('newUsername').value = '';
                     document.getElementById('newPassword').value = '';
-                    await cargarDatos();
+                    
+                    // Recargar datos después de 1 segundo
+                    setTimeout(async () => {
+                        await cargarDatos();
+                    }, 1000);
                 } else {
                     alert('Error: ' + text);
                 }
             } catch (e) {
-                console.error('Error:', e);
+                console.error('Error guardando usuario:', e);
                 alert('Error guardando usuario');
             }
         }
