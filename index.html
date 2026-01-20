@@ -130,6 +130,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .container {
@@ -145,11 +146,11 @@
             z-index: 1;
         }
 
-        #login, #main, #registro {
+        #login, #main, #registro, #permisos {
             display: none;
         }
 
-        #login.active, #main.active, #registro.active {
+        #login.active, #main.active, #registro.active, #permisos.active {
             display: block;
         }
 
@@ -269,12 +270,12 @@
             transform: none;
         }
 
-        #adminBtn {
+        #adminBtn, #permisosBtn {
             background: rgba(175, 82, 222, 0.2);
             border-color: rgba(175, 82, 222, 0.4);
         }
 
-        #adminBtn:hover {
+        #adminBtn:hover, #permisosBtn:hover {
             box-shadow: 0 0 20px rgba(175, 82, 222, 0.5);
         }
 
@@ -301,7 +302,7 @@
             font-weight: 500;
         }
 
-        #registro h2 {
+        #registro h2, #permisos h2 {
             color: var(--accent-green);
             margin-bottom: 20px;
             background: none;
@@ -444,12 +445,107 @@
             border-color: #ff3b30;
         }
 
+        /* PERMISOS SECTION */
+        .usuario-item {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .usuario-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-blue);
+        }
+
+        .usuario-nombre {
+            color: var(--accent-blue);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .permisos-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .permiso-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .permiso-toggle {
+            width: 40px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .permiso-toggle.active {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .permiso-toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+        }
+
+        .permiso-toggle.active::after {
+            left: 18px;
+        }
+
+        .permiso-label {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .usuarios-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .usuarios-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .usuarios-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .usuarios-container::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 10px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
             }
             h2 {
                 font-size: 2em;
+            }
+            .permisos-list {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -470,7 +566,7 @@
     </div>
 
     <!-- TOAST NOTIFICATIONS -->
-    <div class="toast" id="toastSuccess">✓ Usuario creado exitosamente</div>
+    <div class="toast" id="toastSuccess">✓ Operación exitosa</div>
     <div class="toast" id="toastError"></div>
 
     <div class="main-wrapper">
@@ -491,9 +587,10 @@
             <!-- MAIN - OPCIONES -->
             <div id="main">
                 <h2>Bienvenido <span id="currentUser"></span></h2>
-                <button onclick="goEtiquetas()">ETIQUETAS</button>
-                <button onclick="goUbicaciones()">UBICACIONES KM 230</button>
+                <button id="etiquetasBtn" onclick="goEtiquetas()" style="display:none;">ETIQUETAS</button>
+                <button id="ubicacionesBtn" onclick="goUbicaciones()" style="display:none;">UBICACIONES KM 230</button>
                 <button id="adminBtn" onclick="goRegistro()" style="display:none;">REGISTRAR USUARIO</button>
+                <button id="permisosBtn" onclick="goPermisos()" style="display:none;">PERMISOS</button>
                 <button onclick="logout()">SALIR</button>
                 <div id="content"></div>
             </div>
@@ -511,6 +608,17 @@
                 <input type="text" id="newUsername" placeholder="Usuario">
                 <input type="password" id="newPassword" placeholder="Contraseña">
                 <button id="createBtn" onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
+            </div>
+
+            <!-- PERMISOS - GESTIONAR ACCESO USUARIOS -->
+            <div id="permisos">
+                <h2>Gestionar Permisos</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95em;">
+                    Selecciona qué secciones puede acceder cada usuario
+                </p>
+                <div class="usuarios-container" id="usuariosContainer">
+                    <!-- Se llena dinámicamente con JavaScript -->
+                </div>
             </div>
         </div>
     </div>
@@ -535,6 +643,7 @@
         let currentUser;
         let isAdmin = false;
         let usersData = { admins: [], users: [] };
+        let userPermissions = {}; // {usuario: {etiquetas: true, ubicaciones: false, ...}}
         let selectedTipo = 'usuario';
         let passwordVisible = false;
         let currentScreen = 'login';
@@ -615,11 +724,12 @@
             document.getElementById('login').classList.remove('active');
             document.getElementById('main').classList.remove('active');
             document.getElementById('registro').classList.remove('active');
+            document.getElementById('permisos').classList.remove('active');
             document.getElementById(screenId).classList.add('active');
 
             // Mostrar/ocultar botón volver
             const btnVolver = document.getElementById('btnVolver');
-            if (screenId === 'registro') {
+            if (screenId === 'registro' || screenId === 'permisos') {
                 btnVolver.classList.add('active');
             } else {
                 btnVolver.classList.remove('active');
@@ -628,7 +738,7 @@
 
         // VOLVER ATRÁS
         function volverAtras() {
-            if (currentScreen === 'registro') {
+            if (currentScreen === 'registro' || currentScreen === 'permisos') {
                 showScreen('main');
             }
         }
@@ -650,13 +760,51 @@
                 const data = await res.json();
                 usersData.admins = data.admins.filter(row => row[0]);
                 usersData.users = data.users.filter(row => row[0]);
+                
+                // Cargar permisos desde Google Sheets
+                await cargarPermisosDeServidor();
+                
                 console.log('Datos cargados:', {
                     admins: usersData.admins.length,
-                    users: usersData.users.length
+                    users: usersData.users.length,
+                    permisos: Object.keys(userPermissions).length
                 });
             } catch (e) {
                 console.error('Error cargando datos:', e);
                 usersData = { admins: [], users: [] };
+            }
+        }
+
+        // CARGAR PERMISOS DEL SERVIDOR
+        async function cargarPermisosDeServidor() {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'leerPermisos');
+                
+                const res = await fetch(GUARDAR_URL, { method: 'POST', body: formData });
+                const data = await res.json();
+                
+                if (data.permisos) {
+                    userPermissions = data.permisos;
+                } else {
+                    // Permisos por defecto si no existen
+                    usersData.users.forEach(user => {
+                        userPermissions[user[0]] = {
+                            etiquetas: true,
+                            ubicaciones: true
+                        };
+                    });
+                }
+                console.log('Permisos cargados:', userPermissions);
+            } catch (e) {
+                console.error('Error cargando permisos:', e);
+                // Permisos por defecto como fallback
+                usersData.users.forEach(user => {
+                    userPermissions[user[0]] = {
+                        etiquetas: true,
+                        ubicaciones: true
+                    };
+                });
             }
         }
 
@@ -708,11 +856,20 @@
             showScreen('main');
             document.getElementById('currentUser').textContent = currentUser;
             
-            // SOLO ADMINS VEN EL BOTÓN DE REGISTRAR USUARIO
+            // CARGAR PERMISOS DEL USUARIO
+            const permisos = userPermissions[currentUser] || { etiquetas: true, ubicaciones: true };
+            
+            // Mostrar botones según permisos
+            document.getElementById('etiquetasBtn').style.display = permisos.etiquetas ? 'block' : 'none';
+            document.getElementById('ubicacionesBtn').style.display = permisos.ubicaciones ? 'block' : 'none';
+            
+            // SOLO ADMINS VEN LOS BOTONES DE ADMINISTRACIÓN
             if (isAdmin) {
                 document.getElementById('adminBtn').style.display = 'block';
+                document.getElementById('permisosBtn').style.display = 'block';
             } else {
                 document.getElementById('adminBtn').style.display = 'none';
+                document.getElementById('permisosBtn').style.display = 'none';
             }
         }
 
@@ -722,6 +879,9 @@
             document.getElementById('etiquetasContainer').classList.add('hidden');
             document.getElementById('ubicacionesContainer').classList.add('hidden');
             document.getElementById('adminBtn').style.display = 'none';
+            document.getElementById('permisosBtn').style.display = 'none';
+            document.getElementById('etiquetasBtn').style.display = 'none';
+            document.getElementById('ubicacionesBtn').style.display = 'none';
             document.getElementById('user').value = '';
             document.getElementById('pass').value = '';
             passwordVisible = false;
@@ -744,6 +904,73 @@
             showScreen('registro');
             selectedTipo = 'usuario';
             resetTipoButtons();
+        }
+
+        function goPermisos() {
+            showScreen('permisos');
+            cargarUsuariosPermisos();
+        }
+
+        function cargarUsuariosPermisos() {
+            const container = document.getElementById('usuariosContainer');
+            container.innerHTML = '';
+
+            usersData.users.forEach(user => {
+                const username = user[0];
+                const permisos = userPermissions[username] || { etiquetas: true, ubicaciones: true };
+                
+                const usuarioDiv = document.createElement('div');
+                usuarioDiv.className = 'usuario-item';
+                usuarioDiv.innerHTML = `
+                    <div class="usuario-nombre">${username}</div>
+                    <div class="permisos-list">
+                        <div class="permiso-item">
+                            <div class="permiso-toggle ${permisos.etiquetas ? 'active' : ''}" 
+                                 onclick="togglePermiso('${username}', 'etiquetas', this)"></div>
+                            <span class="permiso-label">Etiquetas</span>
+                        </div>
+                        <div class="permiso-item">
+                            <div class="permiso-toggle ${permisos.ubicaciones ? 'active' : ''}" 
+                                 onclick="togglePermiso('${username}', 'ubicaciones', this)"></div>
+                            <span class="permiso-label">Ubicaciones</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(usuarioDiv);
+            });
+        }
+
+        function togglePermiso(usuario, seccion, element) {
+            if (!userPermissions[usuario]) {
+                userPermissions[usuario] = {};
+            }
+            
+            userPermissions[usuario][seccion] = !userPermissions[usuario][seccion];
+            element.classList.toggle('active');
+            
+            // Guardar en Google Sheets
+            guardarPermisosEnServidor();
+        }
+
+        // GUARDAR PERMISOS EN GOOGLE SHEETS
+        async function guardarPermisosEnServidor() {
+            try {
+                const formData = new FormData();
+                formData.append('action', 'guardarPermisos');
+                formData.append('permisos', JSON.stringify(userPermissions));
+                
+                const res = await fetch(GUARDAR_URL, { method: 'POST', body: formData });
+                const text = await res.text();
+                
+                if (text.includes('OK') || text.includes('ok')) {
+                    showToast('Permiso actualizado', 'success', 2000);
+                } else {
+                    showToast('Error al guardar permiso', 'error', 2000);
+                }
+            } catch (e) {
+                console.error('Error guardando permisos:', e);
+                showToast('Error al guardar permiso', 'error', 2000);
+            }
         }
 
         function resetTipoButtons() {
@@ -796,6 +1023,9 @@
                     // Recargar datos después de 1 segundo
                     setTimeout(async () => {
                         await cargarDatos();
+                        // Agregar permisos por defecto para el nuevo usuario
+                        userPermissions[usuario] = { etiquetas: true, ubicaciones: true };
+                        await guardarPermisosEnServidor();
                     }, 1000);
                 } else {
                     showLoading(false);
