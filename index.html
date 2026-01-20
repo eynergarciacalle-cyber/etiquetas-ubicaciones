@@ -46,14 +46,18 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
         body {
             font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
             background: var(--bg-primary);
             background-size: 400% 400%;
             animation: gradientShift 20s ease infinite;
             color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
             position: relative;
             transition: background 0.4s ease, color 0.4s ease;
         }
@@ -109,12 +113,34 @@
             transform: scale(1.1);
         }
 
+        .main-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
         .container {
             max-width: 500px;
-            margin: 0 auto;
-            padding: 40px 20px;
+            width: 100%;
+            padding: 40px;
+            background: var(--button-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-elevated);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
             position: relative;
             z-index: 1;
+        }
+
+        #login, #main, #registro {
+            display: none;
+        }
+
+        #login.active, #main.active, #registro.active {
+            display: block;
         }
 
         h2 {
@@ -130,10 +156,14 @@
             letter-spacing: 1px;
         }
 
+        .input-group {
+            position: relative;
+            margin: 15px 0;
+        }
+
         input, select {
             width: 100%;
             padding: 16px 20px;
-            margin: 15px 0;
             border: none;
             border-radius: 12px;
             background: var(--input-bg);
@@ -154,6 +184,28 @@
             box-shadow: var(--glow-blue), 0 0 0 3px rgba(0, 122, 255, 0.2);
             transform: scale(1.02);
             border-color: var(--accent-blue);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            cursor: pointer;
+            font-size: 20px;
+            width: auto;
+            padding: 0;
+            margin: 0;
+            box-shadow: none;
+        }
+
+        .toggle-password:hover {
+            color: var(--accent-purple);
+            box-shadow: none;
+            transform: translateY(-50%) scale(1.2);
         }
 
         button {
@@ -233,18 +285,6 @@
             font-weight: 500;
         }
 
-        #registro {
-            padding: 40px;
-            max-width: 500px;
-            margin: auto;
-            background: var(--button-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow-elevated);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
         #registro h2 {
             color: var(--accent-green);
             margin-bottom: 20px;
@@ -300,6 +340,8 @@
             justify-content: center;
             box-shadow: 0 4px 20px rgba(0, 122, 255, 0.4);
             transition: all 0.3s;
+            padding: 0;
+            margin: 0;
         }
 
         .btn-volver:hover {
@@ -309,7 +351,7 @@
 
         @media (max-width: 768px) {
             .container {
-                padding: 20px;
+                padding: 30px 20px;
             }
             h2 {
                 font-size: 2em;
@@ -321,20 +363,45 @@
     <!-- TOGGLE TEMA CLARO/OSCURO -->
     <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">☀️</button>
 
-    <div class="container">
-        <div id="login">
-            <h2>ACCESO PRIVADO</h2>
-            <input id="user" placeholder="Usuario"><br>
-            <input id="pass" type="password" placeholder="Contraseña"><br>
-            <button onclick="login()">INICIAR SESIÓN</button>
-        </div>
-        <div id="main" class="hidden">
-            <h2>Bienvenido <span id="currentUser"></span></h2>
-            <button onclick="goEtiquetas()">ETIQUETAS</button>
-            <button onclick="goUbicaciones()">UBICACIONES</button>
-            <button id="adminBtn" onclick="goRegistro()" style="display:none;">REGISTRAR USUARIO</button>
-            <button onclick="logout()">SALIR</button>
-            <div id="content"></div>
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- LOGIN -->
+            <div id="login" class="active">
+                <h2>ACCESO PRIVADO</h2>
+                <input id="user" placeholder="Usuario"><br>
+                
+                <div class="input-group">
+                    <input id="pass" type="password" placeholder="Contraseña">
+                    <button class="toggle-password" onclick="togglePassword()" type="button">👁️</button>
+                </div>
+
+                <button onclick="login()">INICIAR SESIÓN</button>
+            </div>
+
+            <!-- MAIN - OPCIONES -->
+            <div id="main">
+                <h2>Bienvenido <span id="currentUser"></span></h2>
+                <button onclick="goEtiquetas()">ETIQUETAS</button>
+                <button onclick="goUbicaciones()">UBICACIONES</button>
+                <button id="adminBtn" onclick="goRegistro()" style="display:none;">REGISTRAR USUARIO</button>
+                <button onclick="logout()">SALIR</button>
+                <div id="content"></div>
+            </div>
+
+            <!-- REGISTRO - CREAR USUARIOS -->
+            <div id="registro">
+                <h2>Crear Cuenta</h2>
+                
+                <label style="color: var(--text-primary); font-weight: 500; display: block; margin-bottom: 10px;">Tipo de Usuario:</label>
+                <div class="tipo-selector">
+                    <button class="tipo-btn active" onclick="selectTipo('usuario')">Usuario</button>
+                    <button class="tipo-btn" onclick="selectTipo('admin')">Administrador</button>
+                </div>
+
+                <input type="text" id="newUsername" placeholder="Usuario">
+                <input type="password" id="newPassword" placeholder="Contraseña">
+                <button onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
+            </div>
         </div>
     </div>
 
@@ -350,22 +417,6 @@
         <iframe id="ubicaciones" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/UBIKM230/"></iframe>
     </div>
 
-    <!-- CONTENEDOR REGISTRO -->
-    <div id="registro" class="hidden">
-        <h2>Crear Cuenta</h2>
-        
-        <label style="color: var(--text-primary); font-weight: 500; display: block; margin-bottom: 10px;">Tipo de Usuario:</label>
-        <div class="tipo-selector">
-            <button class="tipo-btn active" onclick="selectTipo('usuario')">Usuario</button>
-            <button class="tipo-btn" onclick="selectTipo('admin')">Administrador</button>
-        </div>
-
-        <input type="text" id="newUsername" placeholder="Usuario">
-        <input type="password" id="newPassword" placeholder="Contraseña">
-        <button onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
-        <button class="btn-volver" onclick="volverMain()">←</button>
-    </div>
-
     <script>
         // URLs DE GOOGLE APPS SCRIPT CORRECTAS
         const LEER_URL = 'https://script.google.com/macros/s/AKfycbwK5bI5Q3Y34zzX1gNBi1dUeLckkyRU8G2etrTggPc4kvKAR7YRdxyet4vhfkOmjnRz/exec';
@@ -375,6 +426,22 @@
         let isAdmin = false;
         let usersData = { admins: [], users: [] };
         let selectedTipo = 'usuario';
+        let passwordVisible = false;
+
+        // TOGGLE VER/OCULTAR CONTRASEÑA
+        function togglePassword() {
+            passwordVisible = !passwordVisible;
+            const passInput = document.getElementById('pass');
+            const btn = document.querySelector('.toggle-password');
+            
+            if (passwordVisible) {
+                passInput.type = 'text';
+                btn.textContent = '👁️‍🗨️';
+            } else {
+                passInput.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
 
         // INICIALIZAR TEMA
         function initTheme() {
@@ -397,6 +464,14 @@
             const theme = document.documentElement.getAttribute('data-theme');
             const btn = document.querySelector('.theme-toggle');
             btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // MOSTRAR/OCULTAR PANTALLAS
+        function showScreen(screenId) {
+            document.getElementById('login').classList.remove('active');
+            document.getElementById('main').classList.remove('active');
+            document.getElementById('registro').classList.remove('active');
+            document.getElementById(screenId).classList.add('active');
         }
 
         // SELECCIONAR TIPO DE USUARIO
@@ -436,24 +511,24 @@
             
             if (!user || !pass) return alert('Completa campos');
 
-            // Busca en admins - SIN convertir a mayúsculas
+            // Busca en admins
             for (let row of usersData.admins) {
                 console.log('Comparando admin:', row[0], '==', user);
                 if (row[0] && row[0] === user && row[1] === pass) {
                     currentUser = user;
                     isAdmin = true;
-                    showMain();
+                    showMainScreen();
                     return;
                 }
             }
             
-            // Busca en usuarios - SIN convertir a mayúsculas
+            // Busca en usuarios
             for (let row of usersData.users) {
                 console.log('Comparando usuario:', row[0], '==', user);
                 if (row[0] && row[0] === user && row[1] === pass) {
                     currentUser = user;
                     isAdmin = false;
-                    showMain();
+                    showMainScreen();
                     return;
                 }
             }
@@ -461,9 +536,8 @@
             alert('Usuario o contraseña inválidos');
         }
 
-        function showMain() {
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('main').classList.remove('hidden');
+        function showMainScreen() {
+            showScreen('main');
             document.getElementById('currentUser').textContent = currentUser;
             
             // SOLO ADMINS VEN EL BOTÓN DE REGISTRAR USUARIO
@@ -477,35 +551,29 @@
         function logout() {
             currentUser = '';
             isAdmin = false;
-            document.getElementById('main').classList.add('hidden');
-            document.getElementById('login').classList.remove('hidden');
             document.getElementById('etiquetasContainer').classList.add('hidden');
             document.getElementById('ubicacionesContainer').classList.add('hidden');
-            document.getElementById('registro').classList.add('hidden');
             document.getElementById('adminBtn').style.display = 'none';
             document.getElementById('user').value = '';
             document.getElementById('pass').value = '';
+            passwordVisible = false;
+            document.getElementById('pass').type = 'password';
+            document.querySelector('.toggle-password').textContent = '👁️';
+            showScreen('login');
         }
 
         function goEtiquetas() {
             document.getElementById('etiquetasContainer').classList.remove('hidden');
             document.getElementById('ubicacionesContainer').classList.add('hidden');
-            document.getElementById('registro').classList.add('hidden');
-            document.getElementById('main').classList.add('hidden');
         }
 
         function goUbicaciones() {
             document.getElementById('ubicacionesContainer').classList.remove('hidden');
             document.getElementById('etiquetasContainer').classList.add('hidden');
-            document.getElementById('registro').classList.add('hidden');
-            document.getElementById('main').classList.add('hidden');
         }
 
         function goRegistro() {
-            document.getElementById('registro').classList.remove('hidden');
-            document.getElementById('main').classList.add('hidden');
-            document.getElementById('etiquetasContainer').classList.add('hidden');
-            document.getElementById('ubicacionesContainer').classList.add('hidden');
+            showScreen('registro');
             selectedTipo = 'usuario';
             resetTipoButtons();
         }
@@ -523,12 +591,6 @@
         function volverDesdeIframe() {
             document.getElementById('etiquetasContainer').classList.add('hidden');
             document.getElementById('ubicacionesContainer').classList.add('hidden');
-            document.getElementById('main').classList.remove('hidden');
-        }
-
-        function volverMain() {
-            document.getElementById('registro').classList.add('hidden');
-            document.getElementById('main').classList.remove('hidden');
         }
 
         // CREAR CUENTA - SOLO PARA ADMINS
@@ -574,3 +636,4 @@
     </script>
 </body>
 </html>
+
