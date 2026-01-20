@@ -2,80 +2,297 @@
 <html lang="es">
 <head>
     <title>App Principal Privada</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=SF+Pro+Text:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: linear-gradient(-45deg, #0c0c0c, #1a0033, #0f0f23, #000);
-            --bg-secondary: rgba(255,255,255,0.05);
-            --text-primary: #e0e0ff;
-            --accent-cyan: #00f5ff;
-            --accent-purple: #aa00ff;
-            --accent-blue: #007acc;
-            --glow-cyan: 0 0 20px #00f5ff, 0 0 40px #00f5ff;
-            --glow-purple: 0 0 20px #aa00ff, 0 0 40px #aa00ff;
-            --shadow-neum: 10px 10px 20px rgba(0,0,0,0.5), -10px -10px 20px rgba(255,255,255,0.05);
-            --shadow-inset: inset 5px 5px 10px rgba(0,0,0,0.5), inset -5px -5px 10px rgba(255,255,255,0.05);
+            /* MODO OSCURO */
+            --bg-primary: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #1c1c1e 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #f2f2f7;
+            --accent-blue: #007aff;
+            --accent-green: #34c759;
+            --accent-purple: #af52de;
+            --border-color: rgba(255, 255, 255, 0.2);
+            --glow-blue: 0 0 10px rgba(0, 122, 255, 0.5);
+            --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-input: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --button-bg: rgba(255, 255, 255, 0.12);
+            --placeholder-color: rgba(255, 255, 255, 0.7);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* MODO CLARO */
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f2f2f7 0%, #ffffff 50%, #f8f8f8 100%);
+            --bg-secondary: rgba(0, 0, 0, 0.05);
+            --text-primary: #1d1d1f;
+            --text-secondary: #424245;
+            --accent-blue: #007aff;
+            --accent-green: #34c759;
+            --accent-purple: #af52de;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glow-blue: 0 0 10px rgba(0, 122, 255, 0.3);
+            --shadow-elevated: 0 10px 30px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-input: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(0, 0, 0, 0.05);
+            --button-bg: rgba(0, 0, 0, 0.08);
+            --placeholder-color: rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
             background: var(--bg-primary);
             background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            animation: gradientShift 20s ease infinite;
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            transition: background 0.4s ease, color 0.4s ease;
         }
+
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
         body::before {
             content: '';
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 40%, rgba(120,219,255,0.3) 0%, transparent 50%);
-            pointer-events: none; z-index: -1; animation: float 20s infinite linear;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 122, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(52, 199, 89, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: float 25s infinite linear;
         }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
-        h2 { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 2.5em; text-align: center; margin-bottom: 40px;
-             background: linear-gradient(45deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; background-clip: text; color: transparent;
-             text-shadow: var(--glow-cyan); letter-spacing: 3px; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--button-bg);
+            border: 1px solid var(--border-color);
+            color: var(--accent-blue);
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-elevated);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            box-shadow: var(--glow-blue);
+            transform: scale(1.1);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h2 {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 600;
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
         input, select {
-            width: 100%; padding: 15px 20px; margin: 15px 0; border: none; border-radius: 15px;
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);
-            color: var(--text-primary); font-size: 1.1em; transition: all 0.3s ease;
-            box-shadow: var(--shadow-neum);
+            width: 100%;
+            padding: 16px 20px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 12px;
+            background: var(--input-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-input);
         }
-        input:focus, select:focus { outline: none; box-shadow: var(--glow-cyan), inset 0 0 20px rgba(0,245,255,0.2); transform: scale(1.02); }
+
+        input::placeholder, select::placeholder {
+            color: var(--placeholder-color);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: var(--glow-blue), 0 0 0 3px rgba(0, 122, 255, 0.2);
+            transform: scale(1.02);
+            border-color: var(--accent-blue);
+        }
+
         button {
-            width: 100%; padding: 18px; margin: 10px 0; border: none; border-radius: 15px; font-size: 1.2em; font-weight: 700;
-            cursor: pointer; transition: all 0.4s cubic-bezier(0.25,0.8,0.25,1);
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.3)); box-shadow: var(--shadow-neum);
-            color: var(--text-primary); position: relative; overflow: hidden;
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: var(--button-bg);
+            box-shadow: var(--shadow-elevated);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
         }
+
         button::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
-        button:hover::before { left: 100%; }
-        button:hover { box-shadow: var(--glow-cyan); transform: translateY(-3px); }
-        button:active { transform: translateY(0); box-shadow: var(--shadow-inset); }
-        #adminBtn { background: linear-gradient(145deg, rgba(170,0,255,0.2), rgba(0,0,0,0.4)); }
-        #adminBtn:hover { box-shadow: var(--glow-purple); }
-        .hidden { display: none !important; }
-        #main h2 { margin-bottom: 30px; }
-        #content { margin-top: 30px; }
-        iframe { border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        #currentUser { color: var(--accent-cyan); font-family: 'Orbitron', monospace; }
-        @media (max-width: 768px) { .container { padding: 20px; } h2 { font-size: 2em; } }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            box-shadow: var(--glow-blue);
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-input);
+        }
+
+        #adminBtn {
+            background: rgba(175, 82, 222, 0.2);
+            border-color: rgba(175, 82, 222, 0.4);
+        }
+
+        #adminBtn:hover {
+            box-shadow: 0 0 20px rgba(175, 82, 222, 0.5);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #main h2 {
+            margin-bottom: 30px;
+        }
+
+        #content {
+            margin-top: 30px;
+        }
+
+        iframe {
+            border-radius: 20px;
+            box-shadow: var(--shadow-elevated);
+        }
+
+        #currentUser {
+            color: var(--accent-blue);
+            font-family: 'SF Pro Display', sans-serif;
+            font-weight: 500;
+        }
+
+        #registro {
+            padding: 40px;
+            max-width: 500px;
+            margin: auto;
+            background: var(--button-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-elevated);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        #registro h2 {
+            color: var(--accent-green);
+            margin-bottom: 20px;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+        }
+
+        .btn-volver {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 122, 255, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn-volver:hover {
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.6);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 2em;
+            }
+        }
     </style>
 </head>
 <body onload="cargarDatos()">
+    <!-- TOGGLE TEMA CLARO/OSCURO -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">☀️</button>
+
     <div class="container">
         <div id="login">
             <h2>ACCESO PRIVADO</h2>
@@ -83,7 +300,6 @@
             <input id="pass" type="password" placeholder="Contraseña"><br>
             <button onclick="login()">INICIAR SESIÓN</button>
         </div>
-
         <div id="main" class="hidden">
             <h2>Bienvenido <span id="currentUser"></span></h2>
             <button onclick="goEtiquetas()">ETIQUETAS</button>
@@ -92,97 +308,106 @@
             <button onclick="logout()">SALIR</button>
             <div id="content"></div>
         </div>
+    </div>
 
-        <div id="registro" class="hidden" style="padding:40px;max-width:500px;margin:auto;background:#1a1a1a;border-radius:15px;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
-    <h2 style="color:#00ff88;margin-bottom:20px;text-align:center;">Crear Cuenta</h2>
-    <input type="text" id="newUsername" placeholder="Usuario" style="width:100%;padding:10px;margin:10px 0;border:1px solid #aa00ff;background:#0a0a0a;color:#e0e0ff;border-radius:5px;">
-    <input type="password" id="newPassword" placeholder="Contraseña" style="width:100%;padding:10px;margin:10px 0;border:1px solid #aa00ff;background:#0a0a0a;color:#e0e0ff;border-radius:5px;">
-    <button onclick="createAccount()" style="width:100%;padding:12px;background:#00ff88;color:#000;border:none;border-radius:5px;font-weight:bold;cursor:pointer;margin-top:20px;">Crear Cuenta</button>
-    <button onclick="volverDesdeIframe()" style="position:fixed;top:20px;left:20px;z-index:1000;width:50px;height:50px;border-radius:50%;background:#aa00ff;color:#e0e0ff;border:none;cursor:pointer;font-weight:bold;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(170,0,255,0.6);transition:all 0.3s;">←</button>
-</div>
+    <!-- CONTENEDOR ETIQUETAS -->
+    <div id="etiquetasContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
+        <button class="btn-volver" onclick="volverDesdeIframe()">←</button>
+        <iframe id="etiquetas" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/generador-de-etiquetas-v2/"></iframe>
+    </div>
 
-<!-- CONTENEDOR ETIQUETAS -->
-<div id="etiquetasContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:#0a0a0a;">
-  <iframe id="etiquetas" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/generador-de-etiquetas-v2/"></iframe>
-  <button onclick="volverDesdeIframe()" style="position:fixed;top:20px;left:20px;z-index:10000;width:50px;height:50px;border-radius:50%;background:#aa00ff;color:#e0e0ff;border:2px solid #e0e0ff;cursor:pointer;font-weight:bold;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(170,0,255,0.8);transition:all 0.3s ease;">←</button>
-</div>
+    <!-- CONTENEDOR UBICACIONES -->
+    <div id="ubicacionesContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
+        <button class="btn-volver" onclick="volverDesdeIframe()">←</button>
+        <iframe id="ubicaciones" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/UBIKM230/"></iframe>
+    </div>
 
-<!-- CONTENEDOR UBICACIONES -->
-<div id="ubicacionesContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:#0a0a0a;">
-  <iframe id="ubicaciones" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/UBIKM230/"></iframe>
-  <button onclick="volverDesdeIframe()" style="position:fixed;top:20px;left:20px;z-index:10000;width:50px;height:50px;border-radius:50%;background:#aa00ff;color:#e0e0ff;border:2px solid #e0e0ff;cursor:pointer;font-weight:bold;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(170,0,255,0.8);transition:all 0.3s ease;">←</button>
-</div>
-
-       <div id="etiquetasContainer" class="hidden">
-  <button onclick="volverDesdeIframe()" style="position:fixed;top:10px;right:10px;z-index:1000;padding:10px 20px;background:#aa00ff;color:#e0e0ff;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">← VOLVER</button>
-  <iframe id="etiquetas" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/generador-de-etiquetas-v2/"></iframe>
-</div>
-
-<div id="ubicacionesContainer" class="hidden">
-  <button onclick="volverDesdeIframe()" style="position:fixed;top:10px;right:10px;z-index:1000;padding:10px 20px;background:#aa00ff;color:#e0e0ff;border:none;border-radius:10px;cursor:pointer;font-weight:bold;">← VOLVER</button>
-  <iframe id="ubicaciones" style="width:100%;height:100vh;border:none;" src="https://eynergarciaccalle-cyber.github.io/UBIKM230"></iframe>
-</div>
+    <!-- CONTENEDOR REGISTRO -->
+    <div id="registro" class="hidden">
+        <h2>Crear Cuenta</h2>
+        <input type="text" id="newUsername" placeholder="Usuario">
+        <input type="password" id="newPassword" placeholder="Contraseña">
+        <button onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
+        <button class="btn-volver" onclick="volverMain()">←</button>
+    </div>
 
     <script>
-        // ===== URLs DE GOOGLE APPS SCRIPT (PRIVADAS) =====
+        // URLs DE GOOGLE APPS SCRIPT CORRECTAS
         const LEER_URL = 'https://script.google.com/macros/s/AKfycbwK5bI5Q3Y34zzX1gNBi1dUeLckkyRU8G2etrTggPc4kvKAR7YRdxyet4vhfkOmjnRz/exec';
-        const GUARDAR_URL = 'https://script.google.com/macros/s/AKfycbx7_3XyWc4F74GFkDiCe7Dw0wKSj1jtmxCpC1HT5Af3fN8-U4vUYnCDwp7e16RPKSTxVw/exec';
-        // ==================================================
-
-        let currentUser = '';
+        const GUARDAR_URL = 'https://script.google.com/macros/s/AKfycbx7_3XyWc4f74GFkD1Ce7DW0WkSj1jtmxCpClHT5Af3fN8-U4vUYnCDwp7el6RPKSTxVw/exec';
+        
+        let currentUser;
         let isAdmin = false;
-        let usersData = {admins: [], users: []};
+        let usersData = { admins: [], users: [] };
+
+        // INICIALIZAR TEMA
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton();
+        }
+
+        // CAMBIAR TEMA
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton();
+        }
+
+        // ACTUALIZAR ICONO DEL BOTÓN
+        function updateThemeButton() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
 
         // CARGAR DATOS PRIVADOS DE GOOGLE APPS SCRIPT
-   async function cargarDatos() {
-  try {
-    const res = await fetch(LEER_URL);
-    const data = await res.json();
-    usersData = {
-      admins: (data.admins || []).filter(row => row[0]),
-      users: (data.users || []).filter(row => row[0])
-    };
-    console.log('Datos:', usersData);
-  } catch(e) { 
-    console.error('Error:', e);
-    usersData = {admins: [], users: []};
-  }
-}
+        async function cargarDatos() {
+            initTheme();
+            try {
+                const res = await fetch(LEER_URL);
+                const data = await res.json();
+                usersData.admins = data.admins.filter(row => row[0]);
+                usersData.users = data.users.filter(row => row[0]);
+                console.log('Datos:', usersData);
+            } catch (e) {
+                console.error('Error:', e);
+                usersData = { admins: [], users: [] };
+            }
+        }
 
         // LOGIN PRIVADO
         async function login() {
-  await cargarDatos();
-  const user = document.getElementById('user').value.trim().toUpperCase();
-  const pass = document.getElementById('pass').value;
-  
-  console.log('Intentando login:', user, pass);
-  console.log('usersData completo:', usersData);
-  
-  if (!user || !pass) return alert('Completa campos');
+            await cargarDatos();
+            const user = document.getElementById('user').value.trim().toUpperCase();
+            const pass = document.getElementById('pass').value;
+            console.log('Intentando login:', user, pass);
+            
+            if (!user || !pass) return alert('Completa campos');
 
-  // Busca en admins
-  for (let row of usersData.admins) {
-    console.log('Comparando admin:', row[0], '===', user, '?', row[0] === user);
-    if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
-      currentUser = user;
-      isAdmin = true;
-      showMain();
-      return;
-    }
-  }
-  
-  // Busca en usuarios
-  for (let row of usersData.users) {
-    console.log('Comparando user:', row[0], '===', user, '?', row[0] === user);
-    if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
-      currentUser = user;
-      isAdmin = false;
-      showMain();
-      return;
-    }
-  }
-  alert('Usuario o contraseña inválidos');
-}
+            // Busca en admins
+            for (let row of usersData.admins) {
+                if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
+                    currentUser = user;
+                    isAdmin = true;
+                    showMain();
+                    return;
+                }
+            }
+            
+            // Busca en usuarios
+            for (let row of usersData.users) {
+                if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
+                    currentUser = user;
+                    isAdmin = false;
+                    showMain();
+                    return;
+                }
+            }
+            alert('Usuario o contraseña inválidos');
+        }
 
         function showMain() {
             document.getElementById('login').classList.add('hidden');
@@ -191,7 +416,6 @@
             if (isAdmin) {
                 document.getElementById('adminBtn').style.display = 'block';
             }
-            document.getElementById('content').innerHTML = '';
         }
 
         function logout() {
@@ -199,69 +423,71 @@
             isAdmin = false;
             document.getElementById('main').classList.add('hidden');
             document.getElementById('login').classList.remove('hidden');
-            document.querySelectorAll('iframe').forEach(iframe => iframe.classList.add('hidden'));
+            document.getElementById('etiquetasContainer').classList.add('hidden');
+            document.getElementById('ubicacionesContainer').classList.add('hidden');
             document.getElementById('registro').classList.add('hidden');
             document.getElementById('adminBtn').style.display = 'none';
             document.getElementById('user').value = '';
             document.getElementById('pass').value = '';
         }
 
-      function goEtiquetas() {
-  document.getElementById('etiquetasContainer').classList.remove('hidden');
-  document.getElementById('ubicacionesContainer').classList.add('hidden');
-  document.getElementById('registro').classList.add('hidden');
-  document.getElementById('main').classList.add('hidden');
-}
+        function goEtiquetas() {
+            document.getElementById('etiquetasContainer').classList.remove('hidden');
+            document.getElementById('ubicacionesContainer').classList.add('hidden');
+            document.getElementById('registro').classList.add('hidden');
+            document.getElementById('main').classList.add('hidden');
+        }
 
-function goUbicaciones() {
-  document.getElementById('ubicacionesContainer').classList.remove('hidden');
-  document.getElementById('etiquetasContainer').classList.add('hidden');
-  document.getElementById('registro').classList.add('hidden');
-  document.getElementById('main').classList.add('hidden');
-}
-
-function volverDesdeIframe() {
-  document.getElementById('etiquetasContainer').classList.add('hidden');
-  document.getElementById('ubicacionesContainer').classList.add('hidden');
-  document.getElementById('main').classList.remove('hidden');
-}
+        function goUbicaciones() {
+            document.getElementById('ubicacionesContainer').classList.remove('hidden');
+            document.getElementById('etiquetasContainer').classList.add('hidden');
+            document.getElementById('registro').classList.add('hidden');
+            document.getElementById('main').classList.add('hidden');
+        }
 
         function goRegistro() {
             document.getElementById('registro').classList.remove('hidden');
-            document.getElementById('content').innerHTML = '';
-            document.querySelectorAll('iframe').forEach(iframe => iframe.classList.add('hidden'));
+            document.getElementById('main').classList.add('hidden');
+            document.getElementById('etiquetasContainer').classList.add('hidden');
+            document.getElementById('ubicacionesContainer').classList.add('hidden');
+        }
+
+        function volverDesdeIframe() {
+            document.getElementById('etiquetasContainer').classList.add('hidden');
+            document.getElementById('ubicacionesContainer').classList.add('hidden');
+            document.getElementById('main').classList.remove('hidden');
         }
 
         function volverMain() {
             document.getElementById('registro').classList.add('hidden');
-            document.getElementById('content').innerHTML = '';
+            document.getElementById('main').classList.remove('hidden');
         }
 
-        // GUARDAR USUARIO EN GOOGLE SHEETS PRIVADO
-        async function guardar() {
-            const tipo = document.getElementById('tipo').value;
-            const usuario = document.getElementById('newUser').value.trim();
-            const pass = document.getElementById('newPass').value;
+        // CREAR CUENTA
+        async function createAccount() {
+            const usuario = document.getElementById('newUsername').value.trim();
+            const pass = document.getElementById('newPassword').value;
+            
             if (!usuario || !pass) return alert('Completa campos');
 
             const formData = new FormData();
-            formData.append('tipo', tipo);
+            formData.append('tipo', 'usuario');
             formData.append('usuario', usuario);
             formData.append('pass', pass);
 
             try {
-                const res = await fetch(GUARDAR_URL, {method: 'POST', body: formData});
+                const res = await fetch(GUARDAR_URL, { method: 'POST', body: formData });
                 const text = await res.text();
-                if (text === 'OK') {
-                    alert('✓ Usuario registrado exitosamente');
-                    document.getElementById('newUser').value = '';
-                    document.getElementById('newPass').value = '';
-                    await cargarDatos(); // Recarga datos
+                if (text.includes('OK')) {
+                    alert('Usuario registrado exitosamente');
+                    document.getElementById('newUsername').value = '';
+                    document.getElementById('newPassword').value = '';
+                    await cargarDatos();
                 } else {
                     alert('Error: ' + text);
                 }
-            } catch(e) {
-                console.error('Error guardar:', e);
+            } catch (e) {
+                console.error('Error:', e);
                 alert('Error guardando usuario');
             }
         }
