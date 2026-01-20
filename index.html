@@ -198,19 +198,28 @@
             document.getElementById('pass').value = '';
         }
 
-        function goEtiquetas() {
-            document.getElementById('content').innerHTML = '';
-            document.getElementById('etiquetas').classList.remove('hidden');
-            document.getElementById('ubicaciones').classList.add('hidden');
-            document.getElementById('registro').classList.add('hidden');
-        }
+      function goEtiquetas() {
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('etiquetasContainer').classList.remove('hidden');
+  document.getElementById('ubicacionesContainer').classList.add('hidden');
+  document.getElementById('registro').classList.add('hidden');
+  document.getElementById('main').classList.add('hidden');
+}
+        
+       function goUbicaciones() {
+  document.getElementById('content').innerHTML = '';
+  document.getElementById('ubicacionesContainer').classList.remove('hidden');
+  document.getElementById('etiquetasContainer').classList.add('hidden');
+  document.getElementById('registro').classList.add('hidden');
+  document.getElementById('main').classList.add('hidden');
+}
 
-        function goUbicaciones() {
-            document.getElementById('content').innerHTML = '';
-            document.getElementById('ubicaciones').classList.remove('hidden');
-            document.getElementById('etiquetas').classList.add('hidden');
-            document.getElementById('registro').classList.add('hidden');
-        }
+function volverDesdeIframe() {
+  document.getElementById('etiquetasContainer').classList.add('hidden');
+  document.getElementById('ubicacionesContainer').classList.add('hidden');
+  document.getElementById('main').classList.remove('hidden');
+}
+}
 
         function goRegistro() {
             document.getElementById('registro').classList.remove('hidden');
