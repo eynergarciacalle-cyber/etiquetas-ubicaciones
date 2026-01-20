@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>App Principal Privada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: linear-gradient(-45deg, #0c0c0c, #1a0033, #0f0f23, #000);
+            --bg-secondary: rgba(255,255,255,0.05);
+            --text-primary: #e0e0ff;
+            --accent-cyan: #00f5ff;
+            --accent-purple: #aa00ff;
+            --accent-blue: #007acc;
+            --glow-cyan: 0 0 20px #00f5ff, 0 0 40px #00f5ff;
+            --glow-purple: 0 0 20px #aa00ff, 0 0 40px #aa00ff;
+            --shadow-neum: 10px 10px 20px rgba(0,0,0,0.5), -10px -10px 20px rgba(255,255,255,0.05);
+            --shadow-inset: inset 5px 5px 10px rgba(0,0,0,0.5), inset -5px -5px 10px rgba(255,255,255,0.05);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-primary);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120,219,255,0.3) 0%, transparent 50%);
+            pointer-events: none; z-index: -1; animation: float 20s infinite linear;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .container { max-width: 500px; margin: 0 auto; padding: 40px 20px; position: relative; z-index: 1; }
+        h2 { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 2.5em; text-align: center; margin-bottom: 40px;
+             background: linear-gradient(45deg, var(--accent-cyan), var(--accent-purple)); -webkit-background-clip: text; background-clip: text; color: transparent;
+             text-shadow: var(--glow-cyan); letter-spacing: 3px; }
+        input, select {
+            width: 100%; padding: 15px 20px; margin: 15px 0; border: none; border-radius: 15px;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-primary); font-size: 1.1em; transition: all 0.3s ease;
+            box-shadow: var(--shadow-neum);
+        }
+        input:focus, select:focus { outline: none; box-shadow: var(--glow-cyan), inset 0 0 20px rgba(0,245,255,0.2); transform: scale(1.02); }
+        button {
+            width: 100%; padding: 18px; margin: 10px 0; border: none; border-radius: 15px; font-size: 1.2em; font-weight: 700;
+            cursor: pointer; transition: all 0.4s cubic-bezier(0.25,0.8,0.25,1);
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.3)); box-shadow: var(--shadow-neum);
+            color: var(--text-primary); position: relative; overflow: hidden;
+        }
+        button::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        button:hover::before { left: 100%; }
+        button:hover { box-shadow: var(--glow-cyan); transform: translateY(-3px); }
+        button:active { transform: translateY(0); box-shadow: var(--shadow-inset); }
+        #adminBtn { background: linear-gradient(145deg, rgba(170,0,255,0.2), rgba(0,0,0,0.4)); }
+        #adminBtn:hover { box-shadow: var(--glow-purple); }
+        .hidden { display: none !important; }
+        #main h2 { margin-bottom: 30px; }
+        #content { margin-top: 30px; }
+        iframe { border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        #currentUser { color: var(--accent-cyan); font-family: 'Orbitron', monospace; }
+        @media (max-width: 768px) { .container { padding: 20px; } h2 { font-size: 2em; } }
+    </style>
+</head>
+<body onload="cargarDatos()">
+    <div class="container">
+        <div id="login">
+            <h2>ACCESO PRIVADO</h2>
+            <input id="user" placeholder="Usuario"><br>
+            <input id="pass" type="password" placeholder="Contraseña"><br>
+            <button onclick="login()">INICIAR SESIÓN</button>
+        </div>
+
+        <div id="main" class="hidden">
+            <h2>Bienvenido <span id="currentUser"></span></h2>
+            <button onclick="goEtiquetas()">ETIQUETAS</button>
+            <button onclick="goUbicaciones()">UBICACIONES</button>
+            <button id="adminBtn" onclick="goRegistro()" style="display:none;">REGISTRAR USUARIO</button>
+            <button onclick="logout()">SALIR</button>
+            <div id="content"></div>
+        </div>
+
+        <div id="registro" class="hidden">
+            <h2>REGISTRO USUARIO</h2>
+            <select id="tipo">
+                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+            </select><br>
+            <input id="newUser" placeholder="Nuevo Usuario"><br>
+            <input id="newPass" type="password" placeholder="Nueva Contraseña"><br>
+            <button onclick="guardar()">GUARDAR</button>
+            <button onclick="volverMain()">VOLVER</button>
+        </div>
+
+        <iframe id="etiquetas" class="hidden" src="https://eynergarciacalle-cyber.github.io/generador-de-etiquetas-v2/"></iframe>
+        <iframe id="ubicaciones" class="hidden" src="https://eynergarciacalle-cyber.github.io/UBIKM230/"></iframe>
+    </div>
+
+    <script>
+        // ===== REEMPLAZA ESTAS 2 URLs CON TUS URLs DE GOOGLE APPS SCRIPT =====
+        const LEER_URL = 'https://script.google.com/macros/s/AKfycbwnfddCwYQIN2WRwyVdwc00s4-rmKgJH-nkaP4pmTIzRqLpYSRWQWfCW6N3z48Wi3K5/exec';
+        const GUARDAR_URL = 'https://script.google.com/macros/s/AKfycbx7_3XyWc4f74GFkD1Ce7DW0WkSj1jtmxCpClHT5Af3fN8-U4vUYnCDwp7el6RPKSTxVw/exec';
+        // ======================================================================
+
+        let currentUser = '';
+        let isAdmin = false;
+        let usersData = {admins: [], users: []};
+
+        // CARGAR DATOS PRIVADOS DE GOOGLE APPS SCRIPT
+        async function cargarDatos() {
+            try {
+                const res = await fetch(LEER_URL);
+                usersData = await res.json();
+                console.log('Datos cargados:', usersData);
+            } catch(e) { 
+                console.error('Error carga datos:', e); 
+                alert('Error conectando a Google Sheets. Verifica URLs.');
+            }
+        }
+
+        // LOGIN PRIVADO
+        async function login() {
+            await cargarDatos();
+            const user = document.getElementById('user').value.trim();
+            const pass = document.getElementById('pass').value;
+            if (!user || !pass) return alert('Completa campos');
+
+            // Busca en admins
+            for (let row of usersData.admins) {
+                if (row[0] === user && row[1] === pass) {
+                    currentUser = user;
+                    isAdmin = true;
+                    showMain();
+                    return;
+                }
+            }
+            // Busca en usuarios
+            for (let row of usersData.users) {
+                if (row[0] === user && row[1] === pass) {
+                    currentUser = user;
+                    isAdmin = false;
+                    showMain();
+                    return;
+                }
+            }
+            alert('Usuario o contraseña inválidos');
+        }
+
+        function showMain() {
+            document.getElementById('login').classList.add('hidden');
+            document.getElementById('main').classList.remove('hidden');
+            document.getElementById('currentUser').textContent = currentUser;
+            if (isAdmin) {
+                document.getElementById('adminBtn').style.display = 'block';
+            }
+            document.getElementById('content').innerHTML = '';
+        }
+
+        function logout() {
+            currentUser = '';
+            isAdmin = false;
+            document.getElementById('main').classList.add('hidden');
+            document.getElementById('login').classList.remove('hidden');
+            document.querySelectorAll('iframe').forEach(iframe => iframe.classList.add('hidden'));
+            document.getElementById('registro').classList.add('hidden');
+            document.getElementById('adminBtn').style.display = 'none';
+            document.getElementById('user').value = '';
+            document.getElementById('pass').value = '';
+        }
+
+        function goEtiquetas() {
+            document.getElementById('content').innerHTML = '';
+            document.getElementById('etiquetas').classList.remove('hidden');
+            document.getElementById('ubicaciones').classList.add('hidden');
+            document.getElementById('registro').classList.add('hidden');
+        }
+
+        function goUbicaciones() {
+            document.getElementById('content').innerHTML = '';
+            document.getElementById('ubicaciones').classList.remove('hidden');
+            document.getElementById('etiquetas').classList.add('hidden');
+            document.getElementById('registro').classList.add('hidden');
+        }
+
+        function goRegistro() {
+            document.getElementById('registro').classList.remove('hidden');
+            document.getElementById('content').innerHTML = '';
+            document.querySelectorAll('iframe').forEach(iframe => iframe.classList.add('hidden'));
+        }
+
+        function volverMain() {
+            document.getElementById('registro').classList.add('hidden');
+            document.getElementById('content').innerHTML = '';
+        }
+
+        // GUARDAR USUARIO EN GOOGLE SHEETS PRIVADO
+        async function guardar() {
+            const tipo = document.getElementById('tipo').value;
+            const usuario = document.getElementById('newUser').value.trim();
+            const pass = document.getElementById('newPass').value;
+            if (!usuario || !pass) return alert('Completa campos');
+
+            const formData = new FormData();
+            formData.append('tipo', tipo);
+            formData.append('usuario', usuario);
+            formData.append('pass', pass);
+
+            try {
+                const res = await fetch(GUARDAR_URL, {method: 'POST', body: formData});
+                const text = await res.text();
+                if (text === 'OK') {
+                    alert('✓ Usuario registrado exitosamente');
+                    document.getElementById('newUser').value = '';
+                    document.getElementById('newPass').value = '';
+                    await cargarDatos(); // Recarga datos
+                } else {
+                    alert('Error: ' + text);
+                }
+            } catch(e) {
+                console.error('Error guardar:', e);
+                alert('Error guardando usuario');
+            }
+        }
+    </script>
+</body>
+</html>
