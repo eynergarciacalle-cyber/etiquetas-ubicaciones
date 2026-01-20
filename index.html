@@ -120,14 +120,14 @@
         let usersData = {admins: [], users: []};
 
         // CARGAR DATOS PRIVADOS DE GOOGLE APPS SCRIPT
-       async function cargarDatos() {
+   async function cargarDatos() {
   try {
     const res = await fetch(LEER_URL);
     const data = await res.json();
     
-    // Elimina encabezados (primera fila)
-    let admins = (data.admins || []).filter((row, i) => i > 0 && row[0]);
-    let users = (data.users || []).filter((row, i) => i > 0 && row[0]);
+    // Toma todas las filas MENOS la primera (que son encabezados)
+    let admins = (data.admins || []).slice(1).filter(row => row[0]);
+    let users = (data.users || []).slice(1).filter(row => row[0]);
     
     usersData = {admins: admins, users: users};
     console.log('Datos cargados:', usersData);
