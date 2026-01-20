@@ -139,31 +139,38 @@
 
         // LOGIN PRIVADO
         async function login() {
-            await cargarDatos();
-            const user = document.getElementById('user').value.trim();
-            const pass = document.getElementById('pass').value;
-            if (!user || !pass) return alert('Completa campos');
+  await cargarDatos();
+  const user = document.getElementById('user').value.trim().toUpperCase();
+  const pass = document.getElementById('pass').value;
+  
+  console.log('Intentando login:', user, pass);
+  console.log('usersData completo:', usersData);
+  
+  if (!user || !pass) return alert('Completa campos');
 
-            // Busca en admins
-            for (let row of usersData.admins) {
-                if (row[0] === user && row[1] === pass) {
-                    currentUser = user;
-                    isAdmin = true;
-                    showMain();
-                    return;
-                }
-            }
-            // Busca en usuarios
-            for (let row of usersData.users) {
-                if (row[0] === user && row[1] === pass) {
-                    currentUser = user;
-                    isAdmin = false;
-                    showMain();
-                    return;
-                }
-            }
-            alert('Usuario o contraseña inválidos');
-        }
+  // Busca en admins
+  for (let row of usersData.admins) {
+    console.log('Comparando admin:', row[0], '===', user, '?', row[0] === user);
+    if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
+      currentUser = user;
+      isAdmin = true;
+      showMain();
+      return;
+    }
+  }
+  
+  // Busca en usuarios
+  for (let row of usersData.users) {
+    console.log('Comparando user:', row[0], '===', user, '?', row[0] === user);
+    if (row[0] && row[0].toUpperCase() === user && row[1] === pass) {
+      currentUser = user;
+      isAdmin = false;
+      showMain();
+      return;
+    }
+  }
+  alert('Usuario o contraseña inválidos');
+}
 
         function showMain() {
             document.getElementById('login').classList.add('hidden');
