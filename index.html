@@ -681,6 +681,8 @@
         let selectedTipo = 'usuario';
         let passwordVisible = false;
         let currentScreen = 'login';
+        let syncTimeout = null;
+        let pendingSync = false;
 
         function showLoading(show = true, message = 'Cargando...') {
             const loadingOverlay = document.getElementById('loadingOverlay');
@@ -819,11 +821,11 @@
                     usersData.users.forEach(user => {
                         userPermissions[user[0]] = {
                             etiquetas: true,
-                            ubicaciones: true,
-                            tarapoto: true,
-                            morerilla: true,
-                            piura: true,
-                            olmos: true
+                            ubicaciones: false,
+                            tarapoto: false,
+                            morerilla: false,
+                            piura: false,
+                            olmos: false
                         };
                     });
                 }
@@ -832,11 +834,11 @@
                 usersData.users.forEach(user => {
                     userPermissions[user[0]] = {
                         etiquetas: true,
-                        ubicaciones: true,
-                        tarapoto: true,
-                        morerilla: true,
-                        piura: true,
-                        olmos: true
+                        ubicaciones: false,
+                        tarapoto: false,
+                        morerilla: false,
+                        piura: false,
+                        olmos: false
                     };
                 });
             }
@@ -906,21 +908,40 @@
             showScreen('main');
             document.getElementById('currentUser').textContent = currentUser;
             
-            const permisos = userPermissions[currentUser] || { 
-                etiquetas: true, 
-                ubicaciones: true,
-                tarapoto: true,
-                morerilla: true,
-                piura: true,
-                olmos: true
-            };
-            
-            document.getElementById('etiquetasBtn').style.display = permisos.etiquetas ? 'block' : 'none';
-            document.getElementById('ubicacionesBtn').style.display = permisos.ubicaciones ? 'block' : 'none';
-            document.getElementById('tarapotoBtn').style.display = permisos.tarapoto ? 'block' : 'none';
-            document.getElementById('morerillaBtnBtn').style.display = permisos.morerilla ? 'block' : 'none';
-            document.getElementById('piuraBtn').style.display = permisos.piura ? 'block' : 'none';
-            document.getElementById('olmosBtn').style.display = permisos.olmos ? 'block' : 'none';
+            // LOS ADMINISTRADORES TIENEN TODO ACTIVADO
+            if (isAdmin) {
+                const allPermisos = {
+                    etiquetas: true,
+                    ubicaciones: true,
+                    tarapoto: true,
+                    morerilla: true,
+                    piura: true,
+                    olmos: true
+                };
+                document.getElementById('etiquetasBtn').style.display = 'block';
+                document.getElementById('ubicacionesBtn').style.display = 'block';
+                document.getElementById('tarapotoBtn').style.display = 'block';
+                document.getElementById('morerillaBtnBtn').style.display = 'block';
+                document.getElementById('piuraBtn').style.display = 'block';
+                document.getElementById('olmosBtn').style.display = 'block';
+            } else {
+                // USUARIOS NORMALES: RESPETAN SUS PERMISOS
+                const permisos = userPermissions[currentUser] || { 
+                    etiquetas: true, 
+                    ubicaciones: false,
+                    tarapoto: false,
+                    morerilla: false,
+                    piura: false,
+                    olmos: false
+                };
+                
+                document.getElementById('etiquetasBtn').style.display = permisos.etiquetas ? 'block' : 'none';
+                document.getElementById('ubicacionesBtn').style.display = permisos.ubicaciones ? 'block' : 'none';
+                document.getElementById('tarapotoBtn').style.display = permisos.tarapoto ? 'block' : 'none';
+                document.getElementById('morerillaBtnBtn').style.display = permisos.morerilla ? 'block' : 'none';
+                document.getElementById('piuraBtn').style.display = permisos.piura ? 'block' : 'none';
+                document.getElementById('olmosBtn').style.display = permisos.olmos ? 'block' : 'none';
+            }
             
             if (isAdmin) {
                 document.getElementById('adminBtn').style.display = 'block';
@@ -1006,7 +1027,14 @@
 
             usersData.users.forEach(user => {
                 const username = user[0];
-                const permisos = userPermissions[username] || { etiquetas: true, ubicaciones: true, tarapoto: true, morerilla: true, piura: true, olmos: true };
+                const permisos = userPermissions[username] || { 
+                    etiquetas: true, 
+                    ubicaciones: false,
+                    tarapoto: false,
+                    morerilla: false,
+                    piura: false,
+                    olmos: false
+                };
                 
                 const usuarioDiv = document.createElement('div');
                 usuarioDiv.className = 'usuario-item';
@@ -1057,7 +1085,26 @@
             userPermissions[usuario][seccion] = !userPermissions[usuario][seccion];
             element.classList.toggle('active');
             
-            guardarPermisosEnServidor();
+            // SINCRONIZACIÓN CON DEBOUNCE
+            sincronizarPermisosDeBounce();
+        }
+
+        function sincronizarPermisosDeBounce() {
+            // Limpiar timeout anterior
+            if (syncTimeout) {
+                clearTimeout(syncTimeout);
+            }
+            
+            // Marcar que hay cambios pendientes
+            pendingSync = true;
+            
+            // Esperar 800ms antes de sincronizar
+            syncTimeout = setTimeout(() => {
+                if (pendingSync) {
+                    guardarPermisosEnServidor();
+                    pendingSync = false;
+                }
+            }, 800);
         }
 
         async function guardarPermisosEnServidor() {
@@ -1070,7 +1117,7 @@
                 const text = await res.text();
                 
                 if (text.includes('OK')) {
-                    showToast('Permiso actualizado', 'success', 2000);
+                    showToast('Permisos sincronizados', 'success', 1500);
                 } else {
                     showToast('Error al guardar permiso', 'error', 2000);
                 }
@@ -1124,7 +1171,20 @@
                     document.getElementById('newUsername').value = '';
                     document.getElementById('newPassword').value = '';
                     
-                    cargarPermisosDeServidor();
+                    // SOLO USUARIOS NUEVOS QUE NO SON ADMIN TIENEN FILTRO
+                    if (selectedTipo === 'usuario') {
+                        const defaultPermisos = {
+                            etiquetas: true,
+                            ubicaciones: false,
+                            tarapoto: false,
+                            morerilla: false,
+                            piura: false,
+                            olmos: false
+                        };
+                        userPermissions[usuario] = defaultPermisos;
+                        await guardarPermisosEnServidor();
+                    }
+                    
                 } else {
                     showLoading(false);
                     showToast('Error: ' + text, 'error', 3000);
