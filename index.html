@@ -5,7 +5,6 @@
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&family=SF+Pro+Text:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* MODO OSCURO */
             --bg-primary: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #1c1c1e 100%);
             --bg-secondary: rgba(255, 255, 255, 0.08);
             --text-primary: #ffffff;
@@ -22,7 +21,6 @@
             --placeholder-color: rgba(255, 255, 255, 0.7);
         }
 
-        /* MODO CLARO */
         [data-theme="light"] {
             --bg-primary: linear-gradient(135deg, #f2f2f7 0%, #ffffff 50%, #f8f8f8 100%);
             --bg-secondary: rgba(0, 0, 0, 0.05);
@@ -370,7 +368,6 @@
             transform: scale(1.1);
         }
 
-        /* LOADING OVERLAY */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -410,7 +407,6 @@
             font-family: 'SF Pro Display', sans-serif;
         }
 
-        /* TOAST NOTIFICATION */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -445,7 +441,6 @@
             border-color: #ff3b30;
         }
 
-        /* PERMISOS SECTION */
         .usuario-item {
             background: var(--input-bg);
             border: 1px solid var(--border-color);
@@ -537,7 +532,6 @@
             border-radius: 10px;
         }
 
-        /* CHECKBOX MANTENER SESIÓN */
         .checkbox-container {
             display: flex;
             align-items: center;
@@ -571,13 +565,9 @@
     </style>
 </head>
 <body onload="cargarDatos()">
-    <!-- TOGGLE TEMA CLARO/OSCURO -->
     <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">☀️</button>
-
-    <!-- BOTÓN VOLVER -->
     <button class="btn-volver" id="btnVolver" onclick="volverAtras()">←</button>
 
-    <!-- LOADING SPINNER -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="spinner"></div>
@@ -585,7 +575,6 @@
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATIONS -->
     <div class="toast" id="toastSuccess">✓ Operación exitosa</div>
     <div class="toast" id="toastError"></div>
 
@@ -639,15 +628,13 @@
                 <button id="createBtn" onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
             </div>
 
-            <!-- PERMISOS - GESTIONAR ACCESO USUARIOS -->
+            <!-- PERMISOS -->
             <div id="permisos">
                 <h2>Gestionar Permisos</h2>
                 <p style="text-align: center; color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95em;">
                     Selecciona qué secciones puede acceder cada usuario
                 </p>
-                <div class="usuarios-container" id="usuariosContainer">
-                    <!-- Se llena dinámicamente con JavaScript -->
-                </div>
+                <div class="usuarios-container" id="usuariosContainer"></div>
             </div>
         </div>
     </div>
@@ -658,38 +645,32 @@
         <iframe id="etiquetas" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/generador-de-etiquetas-v2/"></iframe>
     </div>
 
-    <!-- CONTENEDOR UBICACIONES KM 230 -->
     <div id="ubicacionesContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
         <iframe id="ubicaciones" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/UBIKM230/"></iframe>
     </div>
 
-    <!-- CONTENEDOR TARAPOTO -->
     <div id="tarapotoContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
         <iframe id="tarapoto" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-tarapoto/"></iframe>
     </div>
 
-    <!-- CONTENEDOR MORERILLA -->
     <div id="morerillContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
         <iframe id="morerill" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-morerilla/"></iframe>
     </div>
 
-    <!-- CONTENEDOR PIURA -->
     <div id="piuraContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
         <iframe id="piura" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-piura/"></iframe>
     </div>
 
-    <!-- CONTENEDOR OLMOS -->
     <div id="olmosContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
         <iframe id="olmos" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-olmos/"></iframe>
     </div>
 
     <script>
-        // URLs DE GOOGLE APPS SCRIPT
         const LEER_URL = 'https://script.google.com/macros/s/AKfycbwK5bI5Q3Y34zzX1gNBi1dUeLckkyRU8G2etrTggPc4kvKAR7YRdxyet4vhfkOmjnRz/exec';
         const GUARDAR_URL = 'https://script.google.com/macros/s/AKfycbx7_3XyWc4f74GFkD1Ce7DW0WkSj1jtmxCpClHT5Af3fN8-U4vUYnCDwp7el6RPKSTxVw/exec';
         
@@ -701,7 +682,6 @@
         let passwordVisible = false;
         let currentScreen = 'login';
 
-        // MOSTRAR/OCULTAR LOADING
         function showLoading(show = true, message = 'Cargando...') {
             const loadingOverlay = document.getElementById('loadingOverlay');
             const loadingText = document.getElementById('loadingText');
@@ -717,7 +697,6 @@
             }
         }
 
-        // MOSTRAR TOAST
         function showToast(message, type = 'success', duration = 3000) {
             const toastSuccess = document.getElementById('toastSuccess');
             const toastError = document.getElementById('toastError');
@@ -733,7 +712,6 @@
             }
         }
 
-        // TOGGLE VER/OCULTAR CONTRASEÑA
         function togglePassword() {
             passwordVisible = !passwordVisible;
             const passInput = document.getElementById('pass');
@@ -748,14 +726,12 @@
             }
         }
 
-        // INICIALIZAR TEMA
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeButton();
         }
 
-        // CAMBIAR TEMA
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -764,14 +740,12 @@
             updateThemeButton();
         }
 
-        // ACTUALIZAR ICONO DEL BOTÓN
         function updateThemeButton() {
             const theme = document.documentElement.getAttribute('data-theme');
             const btn = document.querySelector('.theme-toggle');
             btn.textContent = theme === 'dark' ? '☀️' : '🌙';
         }
 
-        // MOSTRAR/OCULTAR PANTALLAS
         function showScreen(screenId) {
             currentScreen = screenId;
             document.getElementById('login').classList.remove('active');
@@ -788,14 +762,12 @@
             }
         }
 
-        // VOLVER ATRÁS
         function volverAtras() {
             if (currentScreen === 'registro' || currentScreen === 'permisos') {
                 showScreen('main');
             }
         }
 
-        // SELECCIONAR TIPO DE USUARIO
         function selectTipo(tipo) {
             selectedTipo = tipo;
             document.querySelectorAll('.tipo-btn').forEach(btn => {
@@ -804,7 +776,6 @@
             event.target.classList.add('active');
         }
 
-        // CARGAR DATOS
         async function cargarDatos() {
             initTheme();
             verificarSesionGuardada();
@@ -823,7 +794,6 @@
             }
         }
 
-        // VERIFICAR SESIÓN GUARDADA
         function verificarSesionGuardada() {
             const sesionGuardada = localStorage.getItem('sesionGuardada');
             if (sesionGuardada) {
@@ -835,7 +805,6 @@
             }
         }
 
-        // CARGAR PERMISOS
         async function cargarPermisosDeServidor() {
             try {
                 const formData = new FormData();
@@ -873,7 +842,6 @@
             }
         }
 
-        // LOGIN
         async function login() {
             showLoading(true, 'Cargando...');
             
@@ -922,7 +890,6 @@
             alert('Usuario o contraseña inválidos');
         }
 
-        // GUARDAR SESIÓN
         function guardarSesion(user, admin) {
             const dataSesion = {
                 user: user,
@@ -931,7 +898,6 @@
             localStorage.setItem('sesionGuardada', JSON.stringify(dataSesion));
         }
 
-        // LIMPIAR SESIÓN GUARDADA
         function limpiarSesionGuardada() {
             localStorage.removeItem('sesionGuardada');
         }
@@ -1158,9 +1124,7 @@
                     document.getElementById('newUsername').value = '';
                     document.getElementById('newPassword').value = '';
                     
-                    setTimeout(async () => {
-                        await cargarDatos();
-                    }, 1000);
+                    cargarPermisosDeServidor();
                 } else {
                     showLoading(false);
                     showToast('Error: ' + text, 'error', 3000);
