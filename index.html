@@ -142,9 +142,8 @@
             overflow-y: auto;
         }
 
-        /* Modificación para ancho del container en Main */
         .container {
-            max-width: 500px; /* Default para Login/Registro */
+            max-width: 500px;
             width: 100%;
             padding: 40px;
             background: var(--button-bg);
@@ -157,9 +156,8 @@
             transition: max-width 0.3s ease;
         }
 
-        /* Cuando está activo el MAIN, hacemos el container más ancho para las 2 columnas */
-        #main.active ~ .container,
-        .container:has(#main.active) {
+        /* CLASE PARA EXPANDIR EL CONTENEDOR CUANDO HAY MUCHAS OPCIONES */
+        .container.wide-mode {
             max-width: 900px;
         }
 
@@ -327,23 +325,30 @@
             background-clip: unset;
         }
 
-        /* NUEVO GRID PARA 2 COLUMNAS */
+        /* GRID DINÁMICO */
         .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-            grid-template-rows: repeat(7, min-content); /* Forzar 7 filas en la primera columna */
-            grid-auto-flow: column; /* Llenar hacia abajo y luego a la derecha */
+            display: flex;             /* Por defecto: Flex (1 columna) */
+            flex-direction: column;
             gap: 15px;
             width: 100%;
+            margin: 0 auto;
         }
 
         .menu-grid button {
-            margin: 0; /* El gap del grid maneja el espaciado */
-            height: 100%; /* Asegurar altura uniforme */
-            display: flex; /* Para centrar texto si el botón es alto */
+            margin: 0;
+            height: 100%; 
+            display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+        }
+
+        /* Cuando tiene muchos elementos (se añade por JS) */
+        .menu-grid.multi-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(7, min-content);
+            grid-auto-flow: column;
         }
 
         .tipo-selector {
@@ -589,7 +594,7 @@
             font-size: 0.95em;
         }
 
-        /* FIRMA DEL CREADOR - ADAPTADA A AMBOS TEMAS */
+        /* FIRMA DEL CREADOR */
         .creator-signature {
             margin-top: 30px;
             padding-top: 20px;
@@ -628,7 +633,10 @@
         @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
-                max-width: 100% !important; /* Reset para móvil */
+                max-width: 100% !important;
+            }
+            .container.wide-mode {
+                max-width: 100% !important;
             }
             h2 {
                 font-size: 2em;
@@ -636,9 +644,9 @@
             .permisos-list {
                 grid-template-columns: 1fr;
             }
-            .menu-grid {
+            .menu-grid.multi-column {
                 display: flex;
-                flex-direction: column; /* En móvil, una sola columna */
+                flex-direction: column;
             }
         }
     </style>
@@ -658,7 +666,7 @@
     <div class="toast" id="toastError"></div>
 
     <div class="main-wrapper">
-        <div class="container">
+        <div class="container" id="mainContainer">
             <div id="login" class="active">
                 <h2>GESTOR DE ALMACENES</h2>
                 <input id="user" placeholder="Usuario"><br>
@@ -684,7 +692,7 @@
 
             <div id="main">
                 <h2>Bienvenido <span id="currentUser"></span></h2>
-                <div class="menu-grid">
+                <div class="menu-grid" id="menuGrid">
                     <button id="etiquetasBtn" onclick="goEtiquetas()" style="display:none;">ETIQUETAS</button>
                     <button id="ubicacionesBtn" onclick="goUbicaciones()" style="display:none;">UBICACIONES KM 230</button>
                     <button id="tarapotoBtn" onclick="goTarapoto()" style="display:none;">UBICACIONES TARAPOTO</button>
@@ -692,7 +700,6 @@
                     <button id="piuraBtn" onclick="goPiura()" style="display:none;">UBICACIONES PIURA</button>
                     <button id="olmosBtn" onclick="goOlmos()" style="display:none;">UBICACIONES OLMOS</button>
                     <button id="moyobambaBtn" onclick="goMoyobamba()" style="display:none;">UBICACIONES MOYOBAMBA</button>
-                    
                     <button id="pomalcaBtn" onclick="goPomalca()" style="display:none;">UBICACIONES POMALCA</button>
                     <button id="adminBtn" onclick="goRegistro()" style="display:none;">REGISTRAR USUARIO</button>
                     <button id="permisosBtn" onclick="goPermisos()" style="display:none;">PERMISOS</button>
@@ -711,7 +718,12 @@
                 </div>
 
                 <input type="text" id="newUsername" placeholder="Usuario">
-                <input type="password" id="newPassword" placeholder="Contraseña">
+                
+                <div class="input-group">
+                    <input type="password" id="newPassword" placeholder="Contraseña">
+                    <button class="toggle-password" onclick="toggleRegisterPassword()" type="button">👁️</button>
+                </div>
+
                 <button id="createBtn" onclick="createAccount()" style="background:var(--accent-green);color:#000;margin-top:20px;font-weight:bold;">Crear Cuenta</button>
             </div>
 
@@ -775,6 +787,7 @@
         let userPermissions = {};
         let selectedTipo = 'usuario';
         let passwordVisible = false;
+        let registerPasswordVisible = false; // Nueva variable para registro
         let currentScreen = 'login';
         let syncTimeout = null;
         let pendingSync = false;
@@ -809,12 +822,29 @@
             }
         }
 
+        // TOGGLE PARA LOGIN
         function togglePassword() {
             passwordVisible = !passwordVisible;
             const passInput = document.getElementById('pass');
             const btn = document.querySelector('.toggle-password');
             
             if (passwordVisible) {
+                passInput.type = 'text';
+                btn.textContent = '👁️‍🗨️';
+            } else {
+                passInput.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
+
+        // NUEVO TOGGLE PARA REGISTRO
+        function toggleRegisterPassword() {
+            registerPasswordVisible = !registerPasswordVisible;
+            const passInput = document.getElementById('newPassword');
+            // Buscamos el botón dentro del div de registro
+            const btn = document.querySelector('#registro .toggle-password');
+            
+            if (registerPasswordVisible) {
                 passInput.type = 'text';
                 btn.textContent = '👁️‍🗨️';
             } else {
@@ -862,6 +892,7 @@
         function volverAtras() {
             if (currentScreen === 'registro' || currentScreen === 'permisos') {
                 showScreen('main');
+                checkGridSize(); // Recalcular grid al volver
             }
         }
 
@@ -1000,27 +1031,15 @@
             showScreen('main');
             document.getElementById('currentUser').textContent = currentUser;
             
-            // LOS ADMINISTRADORES TIENEN TODO ACTIVADO
+            // CONFIGURAR VISIBILIDAD DE BOTONES
             if (isAdmin) {
-                document.getElementById('etiquetasBtn').style.display = 'flex';
-                document.getElementById('ubicacionesBtn').style.display = 'flex';
-                document.getElementById('tarapotoBtn').style.display = 'flex';
-                document.getElementById('morerillaBtnBtn').style.display = 'flex';
-                document.getElementById('piuraBtn').style.display = 'flex';
-                document.getElementById('olmosBtn').style.display = 'flex';
-                document.getElementById('moyobambaBtn').style.display = 'flex';
-                document.getElementById('pomalcaBtn').style.display = 'flex';
+                // Admin ve todo
+                const buttons = ['etiquetasBtn', 'ubicacionesBtn', 'tarapotoBtn', 'morerillaBtnBtn', 'piuraBtn', 'olmosBtn', 'moyobambaBtn', 'pomalcaBtn', 'adminBtn', 'permisosBtn'];
+                buttons.forEach(id => document.getElementById(id).style.display = 'flex');
             } else {
-                // USUARIOS NORMALES: RESPETAN SUS PERMISOS
+                // Usuario ve según permisos
                 const permisos = userPermissions[currentUser] || { 
-                    etiquetas: true, 
-                    ubicaciones: false,
-                    tarapoto: false,
-                    morerilla: false,
-                    piura: false,
-                    olmos: false,
-                    moyobamba: false,
-                    pomalca: false
+                    etiquetas: true, ubicaciones: false, tarapoto: false, morerilla: false, piura: false, olmos: false, moyobamba: false, pomalca: false
                 };
                 
                 document.getElementById('etiquetasBtn').style.display = permisos.etiquetas ? 'flex' : 'none';
@@ -1031,14 +1050,36 @@
                 document.getElementById('olmosBtn').style.display = permisos.olmos ? 'flex' : 'none';
                 document.getElementById('moyobambaBtn').style.display = permisos.moyobamba ? 'flex' : 'none';
                 document.getElementById('pomalcaBtn').style.display = permisos.pomalca ? 'flex' : 'none';
-            }
-            
-            if (isAdmin) {
-                document.getElementById('adminBtn').style.display = 'flex';
-                document.getElementById('permisosBtn').style.display = 'flex';
-            } else {
+                
+                // Ocultar botones admin
                 document.getElementById('adminBtn').style.display = 'none';
                 document.getElementById('permisosBtn').style.display = 'none';
+            }
+            
+            // VERIFICAR TAMAÑO DEL GRID AUTOMÁTICAMENTE
+            checkGridSize();
+        }
+
+        // FUNCION PARA DETECTAR CUANTOS BOTONES HAY Y AJUSTAR COLUMNAS
+        function checkGridSize() {
+            const menuGrid = document.getElementById('menuGrid');
+            const mainContainer = document.getElementById('mainContainer');
+            const buttons = menuGrid.querySelectorAll('button');
+            
+            let visibleCount = 0;
+            buttons.forEach(btn => {
+                if (btn.style.display !== 'none') {
+                    visibleCount++;
+                }
+            });
+
+            // LÓGICA: Si hay mas de 7, usar 2 columnas. Si no, 1 columna centrada.
+            if (visibleCount > 7) {
+                menuGrid.classList.add('multi-column');
+                mainContainer.classList.add('wide-mode');
+            } else {
+                menuGrid.classList.remove('multi-column');
+                mainContainer.classList.remove('wide-mode');
             }
         }
 
@@ -1057,48 +1098,22 @@
         }
 
         // FUNCIONES DE NAVEGACIÓN A IFRAMES
-        function goEtiquetas() {
-            document.getElementById('etiquetasContainer').classList.remove('hidden');
-            ocultarOtros('etiquetas');
-        }
-        function goUbicaciones() {
-            document.getElementById('ubicacionesContainer').classList.remove('hidden');
-            ocultarOtros('ubicaciones');
-        }
-        function goTarapoto() {
-            document.getElementById('tarapotoContainer').classList.remove('hidden');
-            ocultarOtros('tarapoto');
-        }
-        function goMorerilla() {
-            document.getElementById('morerillContainer').classList.remove('hidden');
-            ocultarOtros('morerilla');
-        }
-        function goPiura() {
-            document.getElementById('piuraContainer').classList.remove('hidden');
-            ocultarOtros('piura');
-        }
-        function goOlmos() {
-            document.getElementById('olmosContainer').classList.remove('hidden');
-            ocultarOtros('olmos');
-        }
-        function goMoyobamba() {
-            document.getElementById('moyobambaContainer').classList.remove('hidden');
-            ocultarOtros('moyobamba');
-        }
-        function goPomalca() {
-            document.getElementById('pomalcaContainer').classList.remove('hidden');
-            ocultarOtros('pomalca');
-        }
+        function goEtiquetas() { document.getElementById('etiquetasContainer').classList.remove('hidden'); ocultarOtros('etiquetas'); }
+        function goUbicaciones() { document.getElementById('ubicacionesContainer').classList.remove('hidden'); ocultarOtros('ubicaciones'); }
+        function goTarapoto() { document.getElementById('tarapotoContainer').classList.remove('hidden'); ocultarOtros('tarapoto'); }
+        function goMorerilla() { document.getElementById('morerillContainer').classList.remove('hidden'); ocultarOtros('morerilla'); }
+        function goPiura() { document.getElementById('piuraContainer').classList.remove('hidden'); ocultarOtros('piura'); }
+        function goOlmos() { document.getElementById('olmosContainer').classList.remove('hidden'); ocultarOtros('olmos'); }
+        function goMoyobamba() { document.getElementById('moyobambaContainer').classList.remove('hidden'); ocultarOtros('moyobamba'); }
+        function goPomalca() { document.getElementById('pomalcaContainer').classList.remove('hidden'); ocultarOtros('pomalca'); }
 
         function ocultarOtros(mostrar) {
-            if (mostrar !== 'etiquetas') document.getElementById('etiquetasContainer').classList.add('hidden');
-            if (mostrar !== 'ubicaciones') document.getElementById('ubicacionesContainer').classList.add('hidden');
-            if (mostrar !== 'tarapoto') document.getElementById('tarapotoContainer').classList.add('hidden');
-            if (mostrar !== 'morerilla') document.getElementById('morerillContainer').classList.add('hidden');
-            if (mostrar !== 'piura') document.getElementById('piuraContainer').classList.add('hidden');
-            if (mostrar !== 'olmos') document.getElementById('olmosContainer').classList.add('hidden');
-            if (mostrar !== 'moyobamba') document.getElementById('moyobambaContainer').classList.add('hidden');
-            if (mostrar !== 'pomalca') document.getElementById('pomalcaContainer').classList.add('hidden');
+            const ids = ['etiquetas', 'ubicaciones', 'tarapoto', 'morerill', 'piura', 'olmos', 'moyobamba', 'pomalca'];
+            ids.forEach(id => {
+                if (id !== mostrar) {
+                    document.getElementById(id + 'Container').classList.add('hidden');
+                }
+            });
         }
 
         function goRegistro() {
@@ -1119,14 +1134,7 @@
             usersData.users.forEach(user => {
                 const username = user[0];
                 const permisos = userPermissions[username] || { 
-                    etiquetas: true, 
-                    ubicaciones: false,
-                    tarapoto: false,
-                    morerilla: false,
-                    piura: false,
-                    olmos: false,
-                    moyobamba: false,
-                    pomalca: false
+                    etiquetas: true, ubicaciones: false, tarapoto: false, morerilla: false, piura: false, olmos: false, moyobamba: false, pomalca: false
                 };
                 
                 const usuarioDiv = document.createElement('div');
@@ -1134,50 +1142,27 @@
                 usuarioDiv.innerHTML = `
                     <div class="usuario-nombre">${username}</div>
                     <div class="permisos-list">
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.etiquetas ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'etiquetas', this)"></div>
-                            <span class="permiso-label">Etiquetas</span>
-                        </div>
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.ubicaciones ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'ubicaciones', this)"></div>
-                            <span class="permiso-label">KM 230</span>
-                        </div>
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.tarapoto ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'tarapoto', this)"></div>
-                            <span class="permiso-label">Tarapoto</span>
-                        </div>
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.morerilla ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'morerilla', this)"></div>
-                            <span class="permiso-label">Morerilla</span>
-                        </div>
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.piura ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'piura', this)"></div>
-                            <span class="permiso-label">Piura</span>
-                        </div>
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.olmos ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'olmos', this)"></div>
-                            <span class="permiso-label">Olmos</span>
-                        </div>
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.moyobamba ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'moyobamba', this)"></div>
-                            <span class="permiso-label">Moyobamba</span>
-                        </div>
-                        <div class="permiso-item">
-                            <div class="permiso-toggle ${permisos.pomalca ? 'active' : ''}" 
-                                 onclick="togglePermiso('${username}', 'pomalca', this)"></div>
-                            <span class="permiso-label">Pomalca</span>
-                        </div>
+                        ${crearToggle(username, 'etiquetas', 'Etiquetas', permisos.etiquetas)}
+                        ${crearToggle(username, 'ubicaciones', 'KM 230', permisos.ubicaciones)}
+                        ${crearToggle(username, 'tarapoto', 'Tarapoto', permisos.tarapoto)}
+                        ${crearToggle(username, 'morerilla', 'Morerilla', permisos.morerilla)}
+                        ${crearToggle(username, 'piura', 'Piura', permisos.piura)}
+                        ${crearToggle(username, 'olmos', 'Olmos', permisos.olmos)}
+                        ${crearToggle(username, 'moyobamba', 'Moyobamba', permisos.moyobamba)}
+                        ${crearToggle(username, 'pomalca', 'Pomalca', permisos.pomalca)}
                     </div>
                 `;
                 container.appendChild(usuarioDiv);
             });
+        }
+
+        function crearToggle(user, key, label, isActive) {
+            return `
+            <div class="permiso-item">
+                <div class="permiso-toggle ${isActive ? 'active' : ''}" 
+                        onclick="togglePermiso('${user}', '${key}', this)"></div>
+                <span class="permiso-label">${label}</span>
+            </div>`;
         }
 
         function togglePermiso(usuario, seccion, element) {
@@ -1187,21 +1172,12 @@
             
             userPermissions[usuario][seccion] = !userPermissions[usuario][seccion];
             element.classList.toggle('active');
-            
-            // SINCRONIZACIÓN CON DEBOUNCE
             sincronizarPermisosDeBounce();
         }
 
         function sincronizarPermisosDeBounce() {
-            // Limpiar timeout anterior
-            if (syncTimeout) {
-                clearTimeout(syncTimeout);
-            }
-            
-            // Marcar que hay cambios pendientes
+            if (syncTimeout) clearTimeout(syncTimeout);
             pendingSync = true;
-            
-            // Esperar 800ms antes de sincronizar
             syncTimeout = setTimeout(() => {
                 if (pendingSync) {
                     guardarPermisosEnServidor();
@@ -1221,22 +1197,16 @@
                 
                 if (text.includes('OK')) {
                     showToast('Permisos sincronizados', 'success', 1500);
-                } else {
-                    showToast('Error al guardar permiso', 'error', 2000);
                 }
             } catch (e) {
-                console.error('Error guardando permisos:', e);
-                showToast('Error al guardar permiso', 'error', 2000);
+                console.error(e);
             }
         }
 
         function resetTipoButtons() {
             document.querySelectorAll('.tipo-btn').forEach((btn, index) => {
-                if (index === 0) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+                if (index === 0) btn.classList.add('active');
+                else btn.classList.remove('active');
             });
         }
 
@@ -1267,35 +1237,23 @@
                 const text = await res.text();
                 
                 if (text.includes('OK')) {
-                    const tipoTexto = selectedTipo === 'admin' ? 'Administrador' : 'Usuario';
                     showLoading(false);
-                    showToast(tipoTexto + ' creado exitosamente', 'success', 3000);
-                    
+                    showToast('Usuario creado exitosamente', 'success', 3000);
                     document.getElementById('newUsername').value = '';
                     document.getElementById('newPassword').value = '';
                     
-                    // SOLO USUARIOS NUEVOS QUE NO SON ADMIN TIENEN FILTRO
                     if (selectedTipo === 'usuario') {
                         const defaultPermisos = {
-                            etiquetas: true,
-                            ubicaciones: false,
-                            tarapoto: false,
-                            morerilla: false,
-                            piura: false,
-                            olmos: false,
-                            moyobamba: false,
-                            pomalca: false
+                            etiquetas: true, ubicaciones: false, tarapoto: false, morerilla: false, piura: false, olmos: false, moyobamba: false, pomalca: false
                         };
                         userPermissions[usuario] = defaultPermisos;
                         await guardarPermisosEnServidor();
                     }
-                    
                 } else {
                     showLoading(false);
                     showToast('Error: ' + text, 'error', 3000);
                 }
             } catch (e) {
-                console.error('Error guardando usuario:', e);
                 showLoading(false);
                 showToast('Error guardando usuario', 'error', 3000);
             }
