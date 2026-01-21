@@ -19,6 +19,9 @@
             --input-bg: rgba(255, 255, 255, 0.1);
             --button-bg: rgba(255, 255, 255, 0.12);
             --placeholder-color: rgba(255, 255, 255, 0.7);
+            --signature-text: rgba(255, 255, 255, 0.6);
+            --signature-name: #007aff;
+            --signature-year: rgba(255, 255, 255, 0.4);
         }
 
         [data-theme="light"] {
@@ -36,6 +39,9 @@
             --input-bg: rgba(0, 0, 0, 0.05);
             --button-bg: rgba(0, 0, 0, 0.08);
             --placeholder-color: rgba(0, 0, 0, 0.6);
+            --signature-text: rgba(0, 0, 0, 0.55);
+            --signature-name: #007aff;
+            --signature-year: rgba(0, 0, 0, 0.45);
         }
 
         * {
@@ -94,6 +100,11 @@
         @keyframes slideIn {
             0% { transform: translateY(-20px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         .theme-toggle {
@@ -551,6 +562,42 @@
             font-size: 0.95em;
         }
 
+        /* FIRMA DEL CREADOR - ADAPTADA A AMBOS TEMAS */
+        .creator-signature {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+            animation-delay: 0.5s;
+        }
+
+        .creator-signature p {
+            font-size: 0.85em;
+            color: var(--signature-text);
+            margin: 5px 0;
+            font-family: 'SF Pro Text', sans-serif;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .creator-signature p:hover {
+            color: var(--signature-name);
+            text-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
+        }
+
+        .creator-name {
+            font-weight: 600;
+            color: var(--signature-name);
+            font-size: 0.9em;
+        }
+
+        .creator-year {
+            font-size: 0.8em;
+            color: var(--signature-year);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 30px 20px;
@@ -596,6 +643,13 @@
                 </div>
 
                 <button id="loginBtn" onclick="login()">INICIAR SESIÓN</button>
+
+                <!-- FIRMA DEL CREADOR -->
+                <div class="creator-signature">
+                    <p>Created by</p>
+                    <p class="creator-name">Eyner Garcia</p>
+                    <p class="creator-year">© 2026</p>
+                </div>
             </div>
 
             <!-- MAIN - OPCIONES -->
