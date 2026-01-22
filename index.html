@@ -156,7 +156,6 @@
             transition: max-width 0.3s ease;
         }
 
-        /* CLASE PARA EXPANDIR EL CONTENEDOR CUANDO HAY MUCHAS OPCIONES */
         .container.wide-mode {
             max-width: 900px;
         }
@@ -325,9 +324,8 @@
             background-clip: unset;
         }
 
-        /* GRID DINÁMICO */
         .menu-grid {
-            display: flex;             /* Por defecto: Flex (1 columna) */
+            display: flex;
             flex-direction: column;
             gap: 15px;
             width: 100%;
@@ -343,7 +341,6 @@
             text-align: center;
         }
 
-        /* Cuando tiene muchos elementos (se añade por JS) */
         .menu-grid.multi-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -594,7 +591,6 @@
             font-size: 0.95em;
         }
 
-        /* FIRMA DEL CREADOR */
         .creator-signature {
             margin-top: 30px;
             padding-top: 20px;
@@ -787,7 +783,7 @@
         let userPermissions = {};
         let selectedTipo = 'usuario';
         let passwordVisible = false;
-        let registerPasswordVisible = false; // Nueva variable para registro
+        let registerPasswordVisible = false;
         let currentScreen = 'login';
         let syncTimeout = null;
         let pendingSync = false;
@@ -822,7 +818,6 @@
             }
         }
 
-        // TOGGLE PARA LOGIN
         function togglePassword() {
             passwordVisible = !passwordVisible;
             const passInput = document.getElementById('pass');
@@ -837,11 +832,9 @@
             }
         }
 
-        // NUEVO TOGGLE PARA REGISTRO
         function toggleRegisterPassword() {
             registerPasswordVisible = !registerPasswordVisible;
             const passInput = document.getElementById('newPassword');
-            // Buscamos el botón dentro del div de registro
             const btn = document.querySelector('#registro .toggle-password');
             
             if (registerPasswordVisible) {
@@ -858,6 +851,15 @@
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeButton();
         }
+
+        // Prevenir cierre accidental de la página
+        window.addEventListener('beforeunload', function(e) {
+            if (currentUser) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '¿Estás seguro de que deseas salir? Los cambios no guardados se perderán.';
+            }
+        });
 
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -892,7 +894,7 @@
         function volverAtras() {
             if (currentScreen === 'registro' || currentScreen === 'permisos') {
                 showScreen('main');
-                checkGridSize(); // Recalcular grid al volver
+                checkGridSize();
             }
         }
 
@@ -1031,13 +1033,10 @@
             showScreen('main');
             document.getElementById('currentUser').textContent = currentUser;
             
-            // CONFIGURAR VISIBILIDAD DE BOTONES
             if (isAdmin) {
-                // Admin ve todo
                 const buttons = ['etiquetasBtn', 'ubicacionesBtn', 'tarapotoBtn', 'morerillaBtnBtn', 'piuraBtn', 'olmosBtn', 'moyobambaBtn', 'pomalcaBtn', 'adminBtn', 'permisosBtn'];
                 buttons.forEach(id => document.getElementById(id).style.display = 'flex');
             } else {
-                // Usuario ve según permisos
                 const permisos = userPermissions[currentUser] || { 
                     etiquetas: true, ubicaciones: false, tarapoto: false, morerilla: false, piura: false, olmos: false, moyobamba: false, pomalca: false
                 };
@@ -1051,16 +1050,13 @@
                 document.getElementById('moyobambaBtn').style.display = permisos.moyobamba ? 'flex' : 'none';
                 document.getElementById('pomalcaBtn').style.display = permisos.pomalca ? 'flex' : 'none';
                 
-                // Ocultar botones admin
                 document.getElementById('adminBtn').style.display = 'none';
                 document.getElementById('permisosBtn').style.display = 'none';
             }
             
-            // VERIFICAR TAMAÑO DEL GRID AUTOMÁTICAMENTE
             checkGridSize();
         }
 
-        // FUNCION PARA DETECTAR CUANTOS BOTONES HAY Y AJUSTAR COLUMNAS
         function checkGridSize() {
             const menuGrid = document.getElementById('menuGrid');
             const mainContainer = document.getElementById('mainContainer');
@@ -1073,7 +1069,6 @@
                 }
             });
 
-            // LÓGICA: Si hay mas de 7, usar 2 columnas. Si no, 1 columna centrada.
             if (visibleCount > 7) {
                 menuGrid.classList.add('multi-column');
                 mainContainer.classList.add('wide-mode');
@@ -1084,6 +1079,10 @@
         }
 
         function logout() {
+            if (!confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                return;
+            }
+            
             currentUser = '';
             isAdmin = false;
             limpiarSesionGuardada();
@@ -1097,7 +1096,6 @@
             showScreen('login');
         }
 
-        // FUNCIONES DE NAVEGACIÓN A IFRAMES
         function goEtiquetas() { document.getElementById('etiquetasContainer').classList.remove('hidden'); ocultarOtros('etiquetas'); }
         function goUbicaciones() { document.getElementById('ubicacionesContainer').classList.remove('hidden'); ocultarOtros('ubicaciones'); }
         function goTarapoto() { document.getElementById('tarapotoContainer').classList.remove('hidden'); ocultarOtros('tarapoto'); }
