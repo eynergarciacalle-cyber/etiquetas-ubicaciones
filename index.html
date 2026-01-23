@@ -692,7 +692,7 @@
                     <button id="etiquetasBtn" onclick="goEtiquetas()" style="display:none;">ETIQUETAS</button>
                     <button id="ubicacionesBtn" onclick="goUbicaciones()" style="display:none;">UBICACIONES KM 230</button>
                     <button id="tarapotoBtn" onclick="goTarapoto()" style="display:none;">UBICACIONES TARAPOTO</button>
-                    <button id="morerillaBtn" onclick="goMorerilla()" style="display:none;">UBICACIONES MORERILLA</button>
+                    <button id="morerillaBtnBtn" onclick="goMorerilla()" style="display:none;">UBICACIONES MORERILLA</button>
                     <button id="piuraBtn" onclick="goPiura()" style="display:none;">UBICACIONES PIURA</button>
                     <button id="olmosBtn" onclick="goOlmos()" style="display:none;">UBICACIONES OLMOS</button>
                     <button id="moyobambaBtn" onclick="goMoyobamba()" style="display:none;">UBICACIONES MOYOBAMBA</button>
@@ -750,7 +750,7 @@
 
     <div id="morerillContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
-        <iframe id="morerilla" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-morerilla/"></iframe>
+        <iframe id="morerill" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-morerilla/"></iframe>
     </div>
 
     <div id="piuraContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
@@ -1034,7 +1034,7 @@
             document.getElementById('currentUser').textContent = currentUser;
             
             if (isAdmin) {
-                const buttons = ['etiquetasBtn', 'ubicacionesBtn', 'tarapotoBtn', 'morerillaBtn', 'piuraBtn', 'olmosBtn', 'moyobambaBtn', 'pomalcaBtn', 'adminBtn', 'permisosBtn'];
+                const buttons = ['etiquetasBtn', 'ubicacionesBtn', 'tarapotoBtn', 'morerillaBtnBtn', 'piuraBtn', 'olmosBtn', 'moyobambaBtn', 'pomalcaBtn', 'adminBtn', 'permisosBtn'];
                 buttons.forEach(id => document.getElementById(id).style.display = 'flex');
             } else {
                 const permisos = userPermissions[currentUser] || { 
@@ -1044,7 +1044,7 @@
                 document.getElementById('etiquetasBtn').style.display = permisos.etiquetas ? 'flex' : 'none';
                 document.getElementById('ubicacionesBtn').style.display = permisos.ubicaciones ? 'flex' : 'none';
                 document.getElementById('tarapotoBtn').style.display = permisos.tarapoto ? 'flex' : 'none';
-                document.getElementById('morerillaBtn').style.display = permisos.morerilla ? 'flex' : 'none';
+                document.getElementById('morerillaBtnBtn').style.display = permisos.morerilla ? 'flex' : 'none';
                 document.getElementById('piuraBtn').style.display = permisos.piura ? 'flex' : 'none';
                 document.getElementById('olmosBtn').style.display = permisos.olmos ? 'flex' : 'none';
                 document.getElementById('moyobambaBtn').style.display = permisos.moyobamba ? 'flex' : 'none';
@@ -1099,7 +1099,7 @@
         function goEtiquetas() { document.getElementById('etiquetasContainer').classList.remove('hidden'); ocultarOtros('etiquetas'); }
         function goUbicaciones() { document.getElementById('ubicacionesContainer').classList.remove('hidden'); ocultarOtros('ubicaciones'); }
         function goTarapoto() { document.getElementById('tarapotoContainer').classList.remove('hidden'); ocultarOtros('tarapoto'); }
-        function goMorerilla() { document.getElementById('morerillaContainer').classList.remove('hidden'); ocultarOtros('morerilla'); }
+        function goMorerilla() { document.getElementById('morerillContainer').classList.remove('hidden'); ocultarOtros('morerilla'); }
         function goPiura() { document.getElementById('piuraContainer').classList.remove('hidden'); ocultarOtros('piura'); }
         function goOlmos() { document.getElementById('olmosContainer').classList.remove('hidden'); ocultarOtros('olmos'); }
         function goMoyobamba() { document.getElementById('moyobambaContainer').classList.remove('hidden'); ocultarOtros('moyobamba'); }
