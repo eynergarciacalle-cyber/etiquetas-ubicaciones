@@ -748,9 +748,9 @@
         <iframe id="tarapoto" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-tarapoto/"></iframe>
     </div>
 
-    <div id="morerillContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
+    <div id="morerillаContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
-        <iframe id="morerill" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-morerilla/"></iframe>
+        <iframe id="morerillа" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-morerilla/"></iframe>
     </div>
 
     <div id="piuraContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
@@ -1099,14 +1099,14 @@
         function goEtiquetas() { document.getElementById('etiquetasContainer').classList.remove('hidden'); ocultarOtros('etiquetas'); }
         function goUbicaciones() { document.getElementById('ubicacionesContainer').classList.remove('hidden'); ocultarOtros('ubicaciones'); }
         function goTarapoto() { document.getElementById('tarapotoContainer').classList.remove('hidden'); ocultarOtros('tarapoto'); }
-        function goMorerilla() { document.getElementById('morerillContainer').classList.remove('hidden'); ocultarOtros('morerilla'); }
+        function goMorerilla() { document.getElementById('morerillаContainer').classList.remove('hidden'); ocultarOtros('morerillа'); }
         function goPiura() { document.getElementById('piuraContainer').classList.remove('hidden'); ocultarOtros('piura'); }
         function goOlmos() { document.getElementById('olmosContainer').classList.remove('hidden'); ocultarOtros('olmos'); }
         function goMoyobamba() { document.getElementById('moyobambaContainer').classList.remove('hidden'); ocultarOtros('moyobamba'); }
         function goPomalca() { document.getElementById('pomalcaContainer').classList.remove('hidden'); ocultarOtros('pomalca'); }
 
         function ocultarOtros(mostrar) {
-            const ids = ['etiquetas', 'ubicaciones', 'tarapoto', 'morerilla', 'piura', 'olmos', 'moyobamba', 'pomalca'];
+            const ids = ['etiquetas', 'ubicaciones', 'tarapoto', 'morerillа', 'piura', 'olmos', 'moyobamba', 'pomalca'];
             ids.forEach(id => {
                 if (id !== mostrar) {
                     document.getElementById(id + 'Container').classList.add('hidden');
@@ -1209,7 +1209,15 @@
         }
 
         function volverDesdeIframe() {
-            ocultarOtros('ninguno');
+            // Ocultar todos los contenedores de iframe
+            document.getElementById('etiquetasContainer').classList.add('hidden');
+            document.getElementById('ubicacionesContainer').classList.add('hidden');
+            document.getElementById('tarapotoContainer').classList.add('hidden');
+            document.getElementById('morerillаContainer').classList.add('hidden');
+            document.getElementById('piuraContainer').classList.add('hidden');
+            document.getElementById('olmosContainer').classList.add('hidden');
+            document.getElementById('moyobambaContainer').classList.add('hidden');
+            document.getElementById('pomalcaContainer').classList.add('hidden');
         }
 
         async function createAccount() {
