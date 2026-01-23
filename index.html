@@ -750,7 +750,7 @@
 
     <div id="morerillContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
         <button class="btn-volver active" onclick="volverDesdeIframe()">←</button>
-        <iframe id="morerill" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-morerilla/"></iframe>
+        <iframe id="morerilla" style="width:100%;height:100vh;border:none;" src="https://eynergarciacalle-cyber.github.io/ubicaciones-morerilla/"></iframe>
     </div>
 
     <div id="piuraContainer" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100vh;z-index:999;background:var(--bg-primary);">
@@ -1099,14 +1099,14 @@
         function goEtiquetas() { document.getElementById('etiquetasContainer').classList.remove('hidden'); ocultarOtros('etiquetas'); }
         function goUbicaciones() { document.getElementById('ubicacionesContainer').classList.remove('hidden'); ocultarOtros('ubicaciones'); }
         function goTarapoto() { document.getElementById('tarapotoContainer').classList.remove('hidden'); ocultarOtros('tarapoto'); }
-        function goMorerilla() { document.getElementById('morerillContainer').classList.remove('hidden'); ocultarOtros('morerilla'); }
+        function goMorerilla() { document.getElementById('morerillaContainer').classList.remove('hidden'); ocultarOtros('morerilla'); }
         function goPiura() { document.getElementById('piuraContainer').classList.remove('hidden'); ocultarOtros('piura'); }
         function goOlmos() { document.getElementById('olmosContainer').classList.remove('hidden'); ocultarOtros('olmos'); }
         function goMoyobamba() { document.getElementById('moyobambaContainer').classList.remove('hidden'); ocultarOtros('moyobamba'); }
         function goPomalca() { document.getElementById('pomalcaContainer').classList.remove('hidden'); ocultarOtros('pomalca'); }
 
         function ocultarOtros(mostrar) {
-            const ids = ['etiquetas', 'ubicaciones', 'tarapoto', 'morerill', 'piura', 'olmos', 'moyobamba', 'pomalca'];
+            const ids = ['etiquetas', 'ubicaciones', 'tarapoto', 'morerilla', 'piura', 'olmos', 'moyobamba', 'pomalca'];
             ids.forEach(id => {
                 if (id !== mostrar) {
                     document.getElementById(id + 'Container').classList.add('hidden');
