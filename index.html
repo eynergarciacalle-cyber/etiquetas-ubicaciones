@@ -908,7 +908,6 @@
 
         async function cargarDatos() {
             initTheme();
-            verificarSesionGuardada();
             try {
                 const res = await fetch(LEER_URL);
                 const data = await res.json();
@@ -916,6 +915,8 @@
                 usersData.users = data.users.filter(row => row[0]);
                 
                 await cargarPermisosDeServidor();
+                
+                verificarSesionGuardada();
                 
                 console.log('Datos cargados correctamente');
             } catch (e) {
@@ -932,6 +933,7 @@
                 isAdmin = dataSesion.isAdmin;
                 showScreen('main');
                 showMainScreen();
+                actualizarMenu();
             }
         }
 
