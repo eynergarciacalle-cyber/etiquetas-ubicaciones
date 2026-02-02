@@ -112,24 +112,55 @@
             top: 20px;
             right: 20px;
             z-index: 2000;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--button-bg);
-            border: 1px solid var(--border-color);
-            color: var(--accent-blue);
-            font-size: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            color: var(--text-primary);
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow-elevated);
-            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.12),
+                0 2px 4px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .theme-toggle:hover {
-            box-shadow: var(--glow-blue);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.15),
+                0 4px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle:active {
+            transform: translateY(0) scale(0.96);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle svg,
+        .btn-volver svg,
+        .btn-reload svg {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-reload:hover svg {
+            transform: rotate(90deg);
+        }
+
+        .btn-reload:active svg {
+            transform: rotate(180deg);
         }
 
         .main-wrapper {
@@ -381,20 +412,25 @@
             top: 20px;
             left: 20px;
             z-index: 1000;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-            color: #ffffff;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            color: var(--text-primary);
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
             cursor: pointer;
             font-weight: 500;
-            font-size: 24px;
+            font-size: 20px;
             display: none;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 122, 255, 0.4);
-            transition: all 0.3s;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.12),
+                0 2px 4px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 0;
             margin: 0;
         }
@@ -404,8 +440,69 @@
         }
 
         .btn-volver:hover {
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.6);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.15),
+                0 4px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-volver:active {
+            transform: translateY(0) scale(0.96);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-reload {
+            position: fixed;
+            top: 20px;
+            left: 72px;
+            z-index: 1000;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            color: var(--text-primary);
+            border: 0.5px solid rgba(255, 255, 255, 0.18);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.12),
+                0 2px 4px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0;
+            margin: 0;
+        }
+
+        .btn-reload.active {
+            display: flex;
+        }
+
+        .btn-reload:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.15),
+                0 4px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-reload:active {
+            transform: translateY(0) scale(0.96);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .loading-overlay {
@@ -648,8 +745,32 @@
     </style>
 </head>
 <body onload="cargarDatos()">
-    <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">☀️</button>
-    <button class="btn-volver" id="btnVolver" onclick="volverAtras()">←</button>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
+    <button class="btn-volver" id="btnVolver" onclick="volverAtras()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </button>
+    <button class="btn-reload" id="btnReload" onclick="recargarPagina()" title="Recargar página">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+    </button>
 
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
@@ -872,7 +993,30 @@
         function updateThemeButton() {
             const theme = document.documentElement.getAttribute('data-theme');
             const btn = document.querySelector('.theme-toggle');
-            btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+            
+            if (theme === 'dark') {
+                // Ícono de sol para tema oscuro
+                btn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                `;
+            } else {
+                // Ícono de luna para tema claro
+                btn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                `;
+            }
         }
 
         function showScreen(screenId) {
@@ -895,6 +1039,8 @@
             if (currentScreen === 'registro' || currentScreen === 'permisos') {
                 showScreen('main');
                 checkGridSize();
+            } else {
+                volverDesdeIframe();
             }
         }
 
@@ -1097,14 +1243,14 @@
             showScreen('login');
         }
 
-        function goEtiquetas() { document.getElementById('etiquetasContainer').classList.remove('hidden'); ocultarOtros('etiquetas'); }
-        function goUbicaciones() { document.getElementById('ubicacionesContainer').classList.remove('hidden'); ocultarOtros('ubicaciones'); }
-        function goTarapoto() { document.getElementById('tarapotoContainer').classList.remove('hidden'); ocultarOtros('tarapoto'); }
-        function goMorerilla() { document.getElementById('morerillаContainer').classList.remove('hidden'); ocultarOtros('morerillа'); }
-        function goPiura() { document.getElementById('piuraContainer').classList.remove('hidden'); ocultarOtros('piura'); }
-        function goOlmos() { document.getElementById('olmosContainer').classList.remove('hidden'); ocultarOtros('olmos'); }
-        function goMoyobamba() { document.getElementById('moyobambaContainer').classList.remove('hidden'); ocultarOtros('moyobamba'); }
-        function goPomalca() { document.getElementById('pomalcaContainer').classList.remove('hidden'); ocultarOtros('pomalca'); }
+        function goEtiquetas() { document.getElementById('etiquetasContainer').classList.remove('hidden'); ocultarOtros('etiquetas'); mostrarBtnReload(); }
+        function goUbicaciones() { document.getElementById('ubicacionesContainer').classList.remove('hidden'); ocultarOtros('ubicaciones'); mostrarBtnReload(); }
+        function goTarapoto() { document.getElementById('tarapotoContainer').classList.remove('hidden'); ocultarOtros('tarapoto'); mostrarBtnReload(); }
+        function goMorerilla() { document.getElementById('morerillаContainer').classList.remove('hidden'); ocultarOtros('morerillа'); mostrarBtnReload(); }
+        function goPiura() { document.getElementById('piuraContainer').classList.remove('hidden'); ocultarOtros('piura'); mostrarBtnReload(); }
+        function goOlmos() { document.getElementById('olmosContainer').classList.remove('hidden'); ocultarOtros('olmos'); mostrarBtnReload(); }
+        function goMoyobamba() { document.getElementById('moyobambaContainer').classList.remove('hidden'); ocultarOtros('moyobamba'); mostrarBtnReload(); }
+        function goPomalca() { document.getElementById('pomalcaContainer').classList.remove('hidden'); ocultarOtros('pomalca'); mostrarBtnReload(); }
 
         function ocultarOtros(mostrar) {
             const ids = ['etiquetas', 'ubicaciones', 'tarapoto', 'morerillа', 'piura', 'olmos', 'moyobamba', 'pomalca'];
@@ -1219,6 +1365,39 @@
             document.getElementById('olmosContainer').classList.add('hidden');
             document.getElementById('moyobambaContainer').classList.add('hidden');
             document.getElementById('pomalcaContainer').classList.add('hidden');
+            ocultarBtnReload();
+        }
+
+        function mostrarBtnReload() {
+            document.getElementById('btnReload').classList.add('active');
+        }
+
+        function ocultarBtnReload() {
+            document.getElementById('btnReload').classList.remove('active');
+        }
+
+        function recargarPagina() {
+            // Recargar el iframe actual
+            const iframes = [
+                'etiquetasContainer',
+                'ubicacionesContainer', 
+                'tarapotoContainer',
+                'morerillаContainer',
+                'piuraContainer',
+                'olmosContainer',
+                'moyobambaContainer',
+                'pomalcaContainer'
+            ];
+            
+            iframes.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (!container.classList.contains('hidden')) {
+                    const iframe = container.querySelector('iframe');
+                    if (iframe) {
+                        iframe.src = iframe.src;
+                    }
+                }
+            });
         }
 
         async function createAccount() {
